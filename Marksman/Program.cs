@@ -718,8 +718,8 @@ namespace Marksman
             CClass.ToggleActive = ObjectManager.Player.ManaPercent >= vHarassManaPer;
 
             var vLaneClearManaPer = HeroManager.Enemies.Find(e => e.IsValidTarget(2000) && !e.IsZombie) == null
-                ? Config.Item("LaneMana.Enemy").GetValue<Slider>().Value
-                : Config.Item("LaneMana.Alone").GetValue<Slider>().Value;
+                ? Config.Item("LaneMana.Alone").GetValue<Slider>().Value
+                : Config.Item("LaneMana.Enemy").GetValue<Slider>().Value;
 
             CClass.LaneClearActive = CClass.Config.Item("LaneClear").GetValue<KeyBind>().Active &&
                                      ObjectManager.Player.ManaPercent >= vLaneClearManaPer && Config.Item("Lane.Enabled").GetValue<KeyBind>().Active;
