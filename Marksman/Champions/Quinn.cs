@@ -193,7 +193,7 @@ namespace Marksman.Champions
 
         public override void ExecuteJungleClear()
         {
-            if (E.IsReady())
+            if (Q.IsReady())
             {
                 var jQ = Marksman.Utils.Utils.GetMobs(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65, Marksman.Utils.Utils.MobTypes.All);
                 if (jQ != null)
