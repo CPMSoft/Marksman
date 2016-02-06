@@ -435,6 +435,7 @@ namespace Marksman.Champions
         public override bool MiscMenu(Menu config)
         {
             config.AddItem(new MenuItem("Misc.BlockE" + Id, "Block E if can not kill anything").SetValue(false));
+            config.AddItem(new MenuItem("Misc.UseSlowE" + Id, "Use E for slow if it possible").SetValue(true));
             //config.AddItem(new MenuItem("JumpTo" + Id, "JumpTo").SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Press)));
 
             return true;
@@ -711,18 +712,20 @@ namespace Marksman.Champions
 
         public override void PermaActive()
         {
-            var minion =
-                MinionManager.GetMinions(ObjectManager.Player.ServerPosition, E.Range)
-                    .Find(m => m.Health < E.GetDamage(m) + 10 && E.CanCast(m) && E.Cooldown < 0.0001);
-            var enemy =
-                HeroManager.Enemies.Find(
-                    e => e.Buffs.Any(b => b.Name.ToLower() == kalistaEBuffName && e.IsValidTarget(E.Range)));
-            if ((E.CanCast(enemy) || E.CanCast(minion)) && minion != null && enemy != null
-                && ObjectManager.Player.ManaPercent > E.ManaCost * 2)
+            if (GetValue<bool>("Misc.UseSlowE"))
             {
-                E.Cast();
+                var minion =
+                    MinionManager.GetMinions(ObjectManager.Player.ServerPosition, E.Range)
+                        .Find(m => m.Health < E.GetDamage(m) + 10 && E.CanCast(m) && E.Cooldown < 0.0001);
+                var enemy =
+                    HeroManager.Enemies.Find(
+                        e => e.Buffs.Any(b => b.Name.ToLower() == kalistaEBuffName && e.IsValidTarget(E.Range)));
+                if ((E.CanCast(enemy) || E.CanCast(minion)) && minion != null && enemy != null
+                    && ObjectManager.Player.ManaPercent > E.ManaCost*2)
+                {
+                    E.Cast();
+                }
             }
-
             //if (Marksman.Utils.Orbwalking.LastAATick + (ObjectManager.Player.AttackCastDelay * 1000) > LeagueSharp.Common.Utils.GameTimeTickCount)
             //{
             //    var mm = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, E.Range);
