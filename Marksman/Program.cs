@@ -164,7 +164,7 @@ namespace Marksman
                 AutoPink = new Utils.AutoPink();
                 AutoPink.Initialize();
                 IncomingDangerous.Initialize();
-                ExecutedTime.Initialize();
+                //ExecutedTime.Initialize();
                 AutoBushRevealer = new AutoBushRevealer();
                 //EarlyEvade = new Utils.EarlyEvade();
                 //MenuActivator.AddSubMenu(EarlyEvade.MenuLocal);
