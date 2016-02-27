@@ -134,10 +134,10 @@ namespace Marksman.Champions
 
 
             // 3070 tear of the goddess
-            foreach (var i in ObjectManager.Player.InventoryItems)
-            {
+         //  foreach (var i in ObjectManager.Player.InventoryItems)
+          //  {
                 //Game.PrintChat(i.IData.Id.ToString());
-            }
+        //    }
 
             if (GetValue<bool>("PingCH"))
             {
