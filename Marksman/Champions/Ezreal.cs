@@ -50,7 +50,7 @@ namespace Marksman.Champions
                 //Game.PrintChat(args.Buff.Name);
             };
 
-            Utils.PrintMessage("Ezreal loaded.");
+            Utils.PrintMessage("Ezreal loaded. Added Charge R Cooldown. Check the Misc Menu please!");
         }
 
         public override void Orbwalking_AfterAttack(AttackableUnit unit, AttackableUnit target)
