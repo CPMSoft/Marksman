@@ -715,7 +715,7 @@ namespace Marksman
             CClass.HarassActive = CClass.Config.Item("Farm").GetValue<KeyBind>().Active &&
                                   ObjectManager.Player.ManaPercent >= vHarassManaPer;
 
-            CClass.ToggleActive = ObjectManager.Player.ManaPercent >= vHarassManaPer;
+            CClass.ToggleActive = ObjectManager.Player.ManaPercent >= vHarassManaPer && CClass.Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Combo;
 
             var vLaneClearManaPer = HeroManager.Enemies.Find(e => e.IsValidTarget(2000) && !e.IsZombie) == null
                 ? Config.Item("LaneMana.Alone").GetValue<Slider>().Value
