@@ -118,8 +118,6 @@ namespace Marksman.Champions
 
                 if (ObjectManager.Player.ManaPercent >= rMinMana && R.Cooldown >= rCooldown)
                 {
-                    if (ObjectManager.Player.ManaPercent >= rMinMana && R.Cooldown <= rCooldown1 && R.Cooldown >= rCooldown2)
-                    {
                     var vMinions = MinionManager.GetMinions(ObjectManager.Player.Position, Q.Range);
                     foreach (var hit in from minions in vMinions
                         select Q.GetPrediction(minions)
@@ -129,7 +127,6 @@ namespace Marksman.Champions
                         select hit)
                     {
                         Q.Cast(hit);
-                    }
                     }
                 }
             }
