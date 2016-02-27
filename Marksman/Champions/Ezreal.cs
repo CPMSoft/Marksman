@@ -50,7 +50,7 @@ namespace Marksman.Champions
                 //Game.PrintChat(args.Buff.Name);
             };
 
-            Utils.PrintMessage("Ezreal loaded. Added Charge R Cooldown. Check the Misc Menu please!");
+            Utils.PrintMessage("Ezreal loaded");
         }
 
         public override void Orbwalking_AfterAttack(AttackableUnit unit, AttackableUnit target)
@@ -111,6 +111,7 @@ namespace Marksman.Champions
 
         public override void Game_OnGameUpdate(EventArgs args)
         {
+            /*
             if (GetValue<bool>("ChargeR.Enable") && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Combo)
             {
                 var rCooldown = GetValue<Slider>("ChargeR.Cooldown").Value;
@@ -130,6 +131,7 @@ namespace Marksman.Champions
                     }
                 }
             }
+            */
 
 
             // 3070 tear of the goddess
