@@ -111,6 +111,27 @@ namespace Marksman.Champions
 
         public override void Game_OnGameUpdate(EventArgs args)
         {
+            if (GetValue<bool>("ChargeR.Enable") && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Combo)
+            {
+                var rCooldown = GetValue<Slider>("ChargeR.Cooldown").Value;
+                var rMinMana = GetValue<Slider>("ChargeR.MinMana").Value;
+
+                if (ObjectManager.Player.ManaPercent >= rMinMana && R.Cooldown >= rCooldown)
+                {
+                    var minion = MinionManager.GetMinions(Q.Range, MinionTypes.All, MinionTeam.Enemy);
+
+                    if (minion != null)
+                    {
+                        var m = minion[0];
+                        if (m.IsValidTarget(Q.Range))
+                        {
+                            Q.Cast(m);
+                        }
+                    }
+                }
+            }
+
+
             // 3070 tear of the goddess
             foreach (var i in ObjectManager.Player.InventoryItems)
             {
@@ -325,7 +346,7 @@ namespace Marksman.Champions
         public override bool MiscMenu(Menu config)
         {
             config.AddItem(new MenuItem("ChargeR.Enable" + Id, "Charge R with Q").SetValue(true).SetFontStyle(FontStyle.Regular, SharpDX.Color.GreenYellow));
-            config.AddItem(new MenuItem("ChargeR.Cooldown1" + Id, Utils.Tab + "if R cooldown >").SetValue(new Slider(20, 10, 120)));
+            config.AddItem(new MenuItem("ChargeR.Cooldown" + Id, Utils.Tab + "if R cooldown >").SetValue(new Slider(20, 10, 120)));
             config.AddItem(new MenuItem("ChargeR.MinMana" + Id, Utils.Tab + "And Mana >").SetValue(new Slider(50, 0, 100)));
             
             config.AddItem(
