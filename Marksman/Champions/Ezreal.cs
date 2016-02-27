@@ -324,6 +324,10 @@ namespace Marksman.Champions
 
         public override bool MiscMenu(Menu config)
         {
+            config.AddItem(new MenuItem("ChargeR.Enable" + Id, "Charge R with Q").SetValue(true).SetFontStyle(FontStyle.Regular, SharpDX.Color.GreenYellow));
+            config.AddItem(new MenuItem("ChargeR.Cooldown1" + Id, Utils.Tab + "if R cooldown >").SetValue(new Slider(20, 10, 120)));
+            config.AddItem(new MenuItem("ChargeR.MinMana" + Id, Utils.Tab + "And Mana >").SetValue(new Slider(50, 0, 100)));
+            
             config.AddItem(
                 new MenuItem("CastR" + Id, "Cast R (2000 Range)").SetValue(
                     new KeyBind("T".ToCharArray()[0], KeyBindType.Press)));
