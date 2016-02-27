@@ -50,7 +50,7 @@ namespace Marksman.Champions
                 //Game.PrintChat(args.Buff.Name);
             };
 
-            Utils.PrintMessage("Ezreal loaded");
+            Utils.PrintMessage("Ezreal loaded. Added Charge R Option. Please check the misc menu");
         }
 
         public override void Orbwalking_AfterAttack(AttackableUnit unit, AttackableUnit target)
@@ -111,7 +111,6 @@ namespace Marksman.Champions
 
         public override void Game_OnGameUpdate(EventArgs args)
         {
-            /*
             if (GetValue<bool>("ChargeR.Enable") && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Combo)
             {
                 var rCooldown = GetValue<Slider>("ChargeR.Cooldown").Value;
@@ -119,19 +118,22 @@ namespace Marksman.Champions
 
                 if (ObjectManager.Player.ManaPercent >= rMinMana && R.Cooldown >= rCooldown)
                 {
-                    var minion = MinionManager.GetMinions(Q.Range, MinionTypes.All, MinionTeam.Enemy);
-
-                    if (minion != null)
+                    if (ObjectManager.Player.ManaPercent >= rMinMana && R.Cooldown <= rCooldown1 && R.Cooldown >= rCooldown2)
                     {
-                        var m = minion[0];
-                        if (m.IsValidTarget(Q.Range))
-                        {
-                            Q.Cast(m);
-                        }
+                    var vMinions = MinionManager.GetMinions(ObjectManager.Player.Position, Q.Range);
+                    foreach (var hit in from minions in vMinions
+                        select Q.GetPrediction(minions)
+                        into qP
+                        let hit = qP.CastPosition.Extend(ObjectManager.Player.Position, -140)
+                        where qP.Hitchance >= HitChance.High
+                        select hit)
+                    {
+                        Q.Cast(hit);
+                    }
                     }
                 }
             }
-            */
+
 
 
             // 3070 tear of the goddess
