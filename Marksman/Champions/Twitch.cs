@@ -26,7 +26,7 @@ namespace Marksman.Champions
         }
         public static Spell W;
         public static Spell E;
-        private static string twitchEBuffName = "twitchdeadlyvenom";
+        private static string twitchEBuffName = "TwitchDeadlyVenom";
         public Twitch()
         {
             W = new Spell(SpellSlot.W, 950);
@@ -110,7 +110,7 @@ namespace Marksman.Champions
                 if (useE && E.IsReady() && t.IsValidTarget())
                 {
                     var eTarget = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Physical);
-                    if (eTarget.IsValidTarget(E.Range) && eTarget.GetBuffCount("twitchdeadlyvenom") == 6)
+                    if (eTarget.IsValidTarget(E.Range) && eTarget.GetBuffCount("TwitchDeadlyVenom") == 6)
                     {
                         E.Cast();
                     }
