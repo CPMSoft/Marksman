@@ -100,15 +100,15 @@ namespace Marksman.Champions
                 }
             }
 
-            if (GetValue<bool>("UseRC") && R.IsReady() && ComboActive)
+            if (R.IsReady() && ComboActive)
             {
                 foreach (var t in HeroManager.Enemies.Where(hero => hero.IsValidTarget(R.Range) && !hero.IsDead))
                 {
-                    if (R.IsReady())
+                    if (GetValue<bool>("UseRC"))
                     {
                         R.Cast(t, false, true);
                     }
-                    
+
                     if (GetValue<bool>("AutoRI"))
                     {
                         if (t.IsValidTarget(R.Range) &&
