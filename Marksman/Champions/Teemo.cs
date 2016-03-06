@@ -78,7 +78,7 @@ namespace Marksman.Champions
 
         public override void Game_OnGameUpdate(EventArgs args)
         {
-            R.Range = 300 * ObjectManager.Player.Level;
+            R.Range = 150 + (R.Level * 250);
             
             if (Q.IsReady() && GetValue<KeyBind>("UseQTH").Active && ToggleActive)
             {
