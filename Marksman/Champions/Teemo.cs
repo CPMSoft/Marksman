@@ -78,7 +78,7 @@ namespace Marksman.Champions
 
         public override void Game_OnGameUpdate(EventArgs args)
         {
-            R.Range = 150 + (R.Level * 250);
+             R.Range = 150 + (R.Level*250);
             
             if (Q.IsReady() && GetValue<KeyBind>("UseQTH").Active && ToggleActive)
             {
@@ -89,7 +89,7 @@ namespace Marksman.Champions
                     Q.CastOnUnit(qTarget);
             }
 
-            if (Marksman.Utils.Orbwalking.CanMove(100) && (ComboActive || HarassActive))
+            if (ComboActive || HarassActive)
             {
                 var useQ = GetValue<bool>("UseQ" + (ComboActive ? "C" : "H"));
                 if (useQ)
@@ -100,54 +100,34 @@ namespace Marksman.Champions
                 }
             }
 
-            if (GetValue<bool>("UseQM") && Q.IsReady())
-            {
-                foreach (
-                    var hero in
-                        ObjectManager.Get<Obj_AI_Hero>()
-                            .Where(
-                                hero =>
-                                    hero.IsValidTarget(Q.Range) &&
-                                    ObjectManager.Player.GetSpellDamage(hero, SpellSlot.Q) - 20 > hero.Health))
-                    Q.CastOnUnit(hero);
-            }
-
             if (GetValue<bool>("UseRC") && R.IsReady() && ComboActive)
             {
-                foreach (
-                    var hero in
-                        ObjectManager.Get<Obj_AI_Hero>()
-                            .Where(
-                                hero =>
-                                    hero.IsValidTarget(R.Range)))
-                    R.Cast(hero, false, true);
-
-                if (R.IsReady() && GetValue<bool>("AutoRI"))
+                foreach (var t in HeroManager.Enemies.Where(hero => hero.IsValidTarget(R.Range) && !hero.IsDead))
                 {
-                    var t = TargetSelector.GetTarget(R.Range, TargetSelector.DamageType.Physical);
-                    if (t.IsValidTarget(R.Range) &&
-                        (t.HasBuffOfType(BuffType.Stun) || t.HasBuffOfType(BuffType.Snare) ||
-                         t.HasBuffOfType(BuffType.Taunt) || t.HasBuff("zhonyasringshield") ||
-                         t.HasBuff("Recall")))
+                    if (R.IsReady())
                     {
-                        R.Cast(t.Position);
+                        R.Cast(t, false, true);
+                    }
+                    
+                    if (GetValue<bool>("AutoRI"))
+                    {
+                        if (t.IsValidTarget(R.Range) &&
+                            (t.HasBuffOfType(BuffType.Stun) || t.HasBuffOfType(BuffType.Snare) ||
+                             t.HasBuffOfType(BuffType.Taunt) || t.HasBuff("zhonyasringshield") ||
+                             t.HasBuff("Recall")))
+                        {
+                            R.Cast(t.Position);
+                        }
                     }
                 }
             }
 
-
-            if (LaneClearActive)
+            if (LaneClearActive && Q.IsReady() && GetValue<bool>("UseQL"))
             {
-                var useQ = GetValue<bool>("UseQL");
-
-                if (Q.IsReady() && useQ)
+                var vMinions = MinionManager.GetMinions(ObjectManager.Player.Position, Q.Range);
+                foreach (var minions in vMinions.Where(minions => minions.Health < Q.GetDamage(minions) - 10))
                 {
-                    var vMinions = MinionManager.GetMinions(ObjectManager.Player.Position, Q.Range);
-                    foreach (
-                        var minions in
-                            vMinions.Where(
-                                minions => minions.Health < ObjectManager.Player.GetSpellDamage(minions, SpellSlot.Q)))
-                        Q.Cast(minions);
+                    Q.Cast(minions);
                 }
             }
         }
