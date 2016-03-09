@@ -1,4 +1,4 @@
-#region
+﻿#region
 
 using System;
 using System.Linq;
@@ -11,7 +11,7 @@ using SharpDX.Direct3D9;
 
 namespace Marksman.Champions
 {
-    internal class Ashe : Champion
+    internal class Jhin : Champion
     {
         public static Spell Q;
 
@@ -21,12 +21,12 @@ namespace Marksman.Champions
 
         public static Spell R;
 
-        public Ashe()
+        public Jhin()
         {
-            Q = new Spell(SpellSlot.Q);
-            W = new Spell(SpellSlot.W, 1200);
-            E = new Spell(SpellSlot.E);
-            R = new Spell(SpellSlot.R, 4000);
+            Q = new Spell(SpellSlot.Q, 600);
+            W = new Spell(SpellSlot.W, 2400);
+            E = new Spell(SpellSlot.E, 750);
+            R = new Spell(SpellSlot.R, 3500);
 
             W.SetSkillshot(250f, (float)(45f * Math.PI / 180), 900f, true, SkillshotType.SkillshotCone);
             E.SetSkillshot(377f, 299f, 1400f, false, SkillshotType.SkillshotLine);
@@ -34,40 +34,37 @@ namespace Marksman.Champions
 
             Obj_AI_Base.OnProcessSpellCast += Game_OnProcessSpell;
             Interrupter2.OnInterruptableTarget += Interrupter2_OnInterruptableTarget;
-
+            Drawing.OnEndScene += DrawingOnOnEndScene;
             Utility.HpBarDamageIndicator.DamageToUnit = GetComboDamage;
             Utility.HpBarDamageIndicator.Enabled = true;
 
             Obj_AI_Base.OnBuffAdd += (sender, args) =>
             {
-                if (!Config.Item("RInterruptable" + Id).GetValue<bool>())
-                    return;
-
                 BuffInstance aBuff =
                     (from fBuffs in
-                        sender.Buffs.Where(
-                            s =>
-                                sender.Team != ObjectManager.Player.Team
-                                && sender.Distance(ObjectManager.Player.Position) < 2500)
-                        from b in new[] {"katarinar", "MissFortuneBulletTime", "crowstorm"}
+                         sender.Buffs.Where(
+                             s =>
+                             sender.Team != ObjectManager.Player.Team
+                             && sender.Distance(ObjectManager.Player.Position) < 2500)
+                     from b in new[] { "katarinar", "MissFortuneBulletTime", "crowstorm" }
 
-                        where b.Contains(args.Buff.Name.ToLower())
-                        select fBuffs).FirstOrDefault();
+                     where b.Contains(args.Buff.Name.ToLower())
+                     select fBuffs).FirstOrDefault();
 
-                if (aBuff != null && R.IsReady())
+                if (aBuff != null && E.IsReady())
                 {
                     R.Cast(sender.Position);
                 }
             };
 
-            Utils.Utils.PrintMessage("Ashe loaded.");
+            Utils.Utils.PrintMessage("Jhin loaded.");
         }
 
-        private static bool AsheQCastReady
+        private static bool JhinQCastReady
         {
             get
             {
-                return ObjectManager.Player.HasBuff("AsheQCastReady", true);
+                return ObjectManager.Player.HasBuff("JhinQCastReady", true);
             }
         }
 
@@ -149,9 +146,9 @@ namespace Marksman.Champions
 
                 var t = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Physical);
 
-                if (Q.IsReady() && AsheQCastReady)
+                if (Q.IsReady() && JhinQCastReady)
                 {
-                    if (t.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + 90))
+                    if (t.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 90))
                     {
                         Q.Cast();
                     }
@@ -171,7 +168,7 @@ namespace Marksman.Champions
                     t = TargetSelector.GetTarget(maxRRange, TargetSelector.DamageType.Physical);
                     if (!t.IsValidTarget()) return;
 
-                    var aaDamage = Orbwalking.InAutoAttackRange(t)
+                    var aaDamage = Marksman.Utils.Orbwalking.InAutoAttackRange(t)
                                        ? ObjectManager.Player.GetAutoAttackDamage(t, true)
                                        : 0;
 
@@ -202,7 +199,7 @@ namespace Marksman.Champions
 
         public override void ExecuteJungleClear()
         {
-            if (Q.IsReady() && AsheQCastReady)
+            if (Q.IsReady() && JhinQCastReady)
             {
                 var jE = GetValue<StringList>("UseQJ").SelectedIndex;
                 if (jE != 0)
@@ -210,7 +207,7 @@ namespace Marksman.Champions
                     if (jE == 1)
                     {
                         var jungleMobs = Utils.Utils.GetMobs(
-                            Orbwalking.GetRealAutoAttackRange(null) + 65,
+                            Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65,
                             Utils.Utils.MobTypes.BigBoys);
                         if (jungleMobs != null)
                         {
@@ -222,10 +219,10 @@ namespace Marksman.Champions
                         var totalAa =
                             MinionManager.GetMinions(
                                 ObjectManager.Player.Position,
-                                Orbwalking.GetRealAutoAttackRange(null) + 165,
+                                Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 165,
                                 MinionTypes.All,
                                 MinionTeam.Neutral).Sum(mob => (int)mob.Health);
-                        totalAa = (int)(totalAa / ObjectManager.Player.TotalAttackDamage);
+                        totalAa = (int)(totalAa / ObjectManager.Player.TotalAttackDamage());
                         if (totalAa > jE)
                         {
                             Q.Cast();
@@ -267,7 +264,7 @@ namespace Marksman.Champions
 
         public override void ExecuteLaneClear()
         {
-            if (Q.IsReady() && AsheQCastReady)
+            if (Q.IsReady() && JhinQCastReady)
             {
                 var jQ = GetValue<StringList>("UseQ.Lane").SelectedIndex;
                 if (jQ != 0)
@@ -275,10 +272,10 @@ namespace Marksman.Champions
                     var totalAa =
                         ObjectManager.Get<Obj_AI_Minion>()
                             .Where(
-                                m => m.IsEnemy && !m.IsDead && m.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null)))
+                                m => m.IsEnemy && !m.IsDead && m.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null)))
                             .Sum(mob => (int)mob.Health);
 
-                    totalAa = (int)(totalAa / ObjectManager.Player.TotalAttackDamage);
+                    totalAa = (int)(totalAa / ObjectManager.Player.TotalAttackDamage());
                     if (totalAa > jQ)
                     {
                         Q.Cast();
@@ -402,15 +399,24 @@ namespace Marksman.Champions
 
         public override bool DrawingMenu(Menu config)
         {
-            config.AddItem(
-                new MenuItem("DrawW" + Id, "W range").SetValue(new Circle(true, System.Drawing.Color.CornflowerBlue)));
+            config.AddItem(new MenuItem("Draw.X", "W range").SetValue(new Slider(500,0, 4000)));
+
+            //config.AddItem(new MenuItem("DrawW" + Id, "W range").SetValue(new Circle(true, System.Drawing.Color.CornflowerBlue)));
             return true;
+        }
+
+        private static void DrawingOnOnEndScene(EventArgs args)
+        {
+            Utility.DrawCircle(ObjectManager.Player.Position, W.Range, System.Drawing.Color.White, 1, 23, true);
+            Utility.DrawCircle(ObjectManager.Player.Position, R.Range, System.Drawing.Color.Aqua, 1, 23, true);
+            var rCircle2 = Program.Config.Item("Draw.X").GetValue<Slider>().Value;
+                Utility.DrawCircle(ObjectManager.Player.Position, rCircle2, System.Drawing.Color.Red, 1, 23, true);
         }
 
         public override bool MiscMenu(Menu config)
         {
             config.AddItem(new MenuItem("RInterruptable" + Id, "Auto R Interruptable Spells").SetValue(true));
-            config.AddItem(new MenuItem("EFlash" + Id, "Use E against Flashes").SetValue(true));
+            config.AddItem(new MenuItem("EFlash" + Id, "Use E against FlJhins").SetValue(true));
             config.AddItem(new MenuItem("RManualCast" + Id, "Cast R Manually(2000 range)"))
                 .SetValue(new KeyBind('T', KeyBindType.Press));
             return true;
@@ -418,6 +424,9 @@ namespace Marksman.Champions
 
         public override void Drawing_OnDraw(EventArgs args)
         {
+            var drawx = Config.Item("Draw.X").GetValue<Slider>().Value;
+            Render.Circle.DrawCircle(ObjectManager.Player.Position, drawx, System.Drawing.Color.Red);
+            return;
             //foreach (var e in HeroManager.Enemies.Where(e => e.IsValidTarget(3500)))
             //{
             //    var x = new Geometry.Polygon.Line(e.Position, e.Path[0]);

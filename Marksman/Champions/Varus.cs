@@ -258,7 +258,7 @@ namespace Marksman.Champions
             }
         }
 
-        public override void Orbwalking_BeforeAttack(Marksman.Utils.Orbwalking.BeforeAttackEventArgs args)
+        public override void Orbwalking_BeforeAttack(Orbwalking.BeforeAttackEventArgs args)
         {
             args.Process = !Q.IsCharging;
         }

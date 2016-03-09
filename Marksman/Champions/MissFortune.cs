@@ -79,8 +79,8 @@ namespace Marksman.Champions
         public override void Game_OnGameUpdate(EventArgs args)
         {
             var ultCasting = Game.Time - UltiCastedTime < 0.2 || ObjectManager.Player.IsChannelingImportantSpell();
-            Marksman.Utils.Orbwalking.Attack = !ultCasting;
-            Marksman.Utils.Orbwalking.Move = !ultCasting;
+            Orbwalking.Attack = !ultCasting;
+            Orbwalking.Move = !ultCasting;
 
             if (Q.IsReady() && GetValue<KeyBind>("UseQTH").Active)
             {
@@ -174,7 +174,7 @@ namespace Marksman.Champions
                     {
                         if (jW == 1)
                         {
-                            jungleMobs = Utils.Utils.GetMobs(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65,
+                            jungleMobs = Utils.Utils.GetMobs(Orbwalking.GetRealAutoAttackRange(null) + 65,
                                 Utils.Utils.MobTypes.BigBoys);
                             if (jungleMobs != null)
                             {
@@ -188,10 +188,10 @@ namespace Marksman.Champions
                                     .Where(
                                         m =>
                                             m.Team == GameObjectTeam.Neutral &&
-                                            m.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 165))
+                                            m.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + 165))
                                     .Sum(mob => (int) mob.Health);
 
-                            totalAa = (int) (totalAa/ObjectManager.Player.TotalAttackDamage());
+                            totalAa = (int) (totalAa/ObjectManager.Player.TotalAttackDamage);
                             if (totalAa >= jW)
                             {
                                 W.Cast();
@@ -217,7 +217,7 @@ namespace Marksman.Champions
             }
         }
 
-        public override void Orbwalking_BeforeAttack(Marksman.Utils.Orbwalking.BeforeAttackEventArgs args)
+        public override void Orbwalking_BeforeAttack(Orbwalking.BeforeAttackEventArgs args)
         {
             if (!W.IsReady())
             {
@@ -275,10 +275,10 @@ namespace Marksman.Champions
                             .Where(
                                 m =>
                                     m.IsEnemy && !m.IsDead &&
-                                    m.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null)))
+                                    m.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null)))
                             .Sum(mob => (int) mob.Health);
 
-                    totalAa = (int) (totalAa/ObjectManager.Player.TotalAttackDamage());
+                    totalAa = (int) (totalAa/ObjectManager.Player.TotalAttackDamage);
                     if (totalAa > lW)
                     {
                         W.Cast();

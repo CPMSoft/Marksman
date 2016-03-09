@@ -43,7 +43,7 @@ namespace Marksman.Champions
                 if (menuItem.Active)
                     Render.Circle.DrawCircle(ObjectManager.Player.Position,
                         spell.Slot == SpellSlot.W
-                            ? Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65 + W.Range
+                            ? Orbwalking.GetRealAutoAttackRange(null) + 65 + W.Range
                             : spell.Range,
                         menuItem.Color);
             }
@@ -70,11 +70,11 @@ namespace Marksman.Champions
         {
             get
             {
-                return Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65 + (bioArcaneActive ? W.Range : 0);
+                return Orbwalking.GetRealAutoAttackRange(null) + 65 + (bioArcaneActive ? W.Range : 0);
             }
         }
 
-        public override void Orbwalking_BeforeAttack(Marksman.Utils.Orbwalking.BeforeAttackEventArgs args)
+        public override void Orbwalking_BeforeAttack(Orbwalking.BeforeAttackEventArgs args)
         {
             if (!W.IsReady())
             {
@@ -128,7 +128,7 @@ namespace Marksman.Champions
                     R.Cast(hero, false, true);
 
             if ((!ComboActive && !HarassActive) ||
-                (!Marksman.Utils.Orbwalking.CanMove(100) &&
+                (!Orbwalking.CanMove(100) &&
                  !(ObjectManager.Player.BaseAbilityDamage + ObjectManager.Player.FlatMagicDamageMod > 100))) return;
 
             var useQ = GetValue<bool>("UseQ" + (ComboActive ? "C" : "H"));
@@ -252,10 +252,10 @@ namespace Marksman.Champions
                     ObjectManager.Get<Obj_AI_Minion>()
                         .Where(
                             m =>
-                                m.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65 + W.Range))
+                                m.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + 65 + W.Range))
                         .Sum(mob => (int) mob.Health);
 
-                totalAa = (int) (totalAa/ObjectManager.Player.TotalAttackDamage());
+                totalAa = (int) (totalAa/ObjectManager.Player.TotalAttackDamage);
                 if (totalAa > laneWValue*5)
                 {
                     W.Cast();
@@ -375,7 +375,7 @@ namespace Marksman.Champions
                     if (jungleW == 1)
                     {
                         jungleMobs =
-                            Utils.Utils.GetMobs(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65 + W.Range,
+                            Utils.Utils.GetMobs(Orbwalking.GetRealAutoAttackRange(null) + 65 + W.Range,
                                 Utils.Utils.MobTypes.BigBoys);
                         if (jungleMobs != null)
                         {
@@ -389,10 +389,10 @@ namespace Marksman.Champions
                                 .Where(
                                     m =>
                                         m.Team == GameObjectTeam.Neutral &&
-                                        m.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65 + W.Range))
+                                        m.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + 65 + W.Range))
                                 .Sum(mob => (int) mob.Health);
 
-                        totalAa = (int) (totalAa/ObjectManager.Player.TotalAttackDamage());
+                        totalAa = (int) (totalAa/ObjectManager.Player.TotalAttackDamage);
                         if (totalAa > jungleW*5)
                         {
                             W.Cast();

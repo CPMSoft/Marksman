@@ -52,7 +52,6 @@ namespace Marksman.Champions
 
         public override void Drawing_OnDraw(EventArgs args)
         {
-            return;
             Spell[] spellList = {W};
             foreach (var spell in spellList)
             {
@@ -93,7 +92,7 @@ namespace Marksman.Champions
             //        Render.Circle.DrawCircle(m.Position, (float) (m.BoundingRadius*1.5), Color.White);
             //}
          
-            if (Marksman.Utils.Orbwalking.CanMove(100) && (ComboActive || HarassActive))
+            if (Orbwalking.CanMove(100) && (ComboActive || HarassActive))
             {
                 var useW = GetValue<bool>("UseW" + (ComboActive ? "C" : "H"));
                 var useE = GetValue<bool>("UseE" + (ComboActive ? "C" : "H"));
@@ -116,7 +115,6 @@ namespace Marksman.Champions
                     }
                 }
             }
-            return;
 
             if (GetValue<bool>("UseEM") && E.IsReady())
             {
@@ -145,8 +143,8 @@ namespace Marksman.Champions
                         ObjectManager.Get<Obj_AI_Minion>()
                             .Where(
                                 m =>
-                                    m.Health > ObjectManager.Player.TotalAttackDamage() &&
-                                    m.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65))
+                                    m.Health > ObjectManager.Player.TotalAttackDamage &&
+                                    m.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + 65))
                     select m;
 
                 var objAiMinions = minions as Obj_AI_Minion[] ?? minions.ToArray();

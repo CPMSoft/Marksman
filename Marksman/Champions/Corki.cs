@@ -9,7 +9,7 @@ using LeagueSharp.Common;
 using Marksman.Utils;
 using SharpDX;
 using Color = System.Drawing.Color;
-using Orbwalking = Marksman.Utils.Orbwalking;
+
 
 #endregion
 
@@ -143,7 +143,7 @@ namespace Marksman.Champions
                 }
             }
 
-            if ((!ComboActive && !HarassActive) || !Marksman.Utils.Orbwalking.CanMove(100)) return;
+            if ((!ComboActive && !HarassActive) || !Orbwalking.CanMove(100)) return;
 
             var useQ = GetValue<bool>("UseQ" + (ComboActive ? "C" : "H"));
             var useE = GetValue<bool>("UseE" + (ComboActive ? "C" : "H"));

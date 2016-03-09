@@ -19,9 +19,7 @@ namespace Marksman.Champions
     {
         public static Obj_AI_Hero Player = ObjectManager.Player;
         public static Spell Q, W, E, R;
-        public static Font font, fontsmall;
-        public static int LastTickTime;
-
+        
         public Tristana()
         {
             Q = new Spell(SpellSlot.Q, 703);
@@ -72,7 +70,7 @@ namespace Marksman.Champions
                 R.CastOnUnit(unit);
         }
 
-        public override void Orbwalking_BeforeAttack(Marksman.Utils.Orbwalking.BeforeAttackEventArgs args)
+        public override void Orbwalking_BeforeAttack(Orbwalking.BeforeAttackEventArgs args)
         {
             if (GetValue<bool>("Misc.UseQ.Inhibitor") && args.Target is Obj_BarracksDampener && Q.IsReady())
             {
@@ -109,7 +107,7 @@ namespace Marksman.Champions
             if (args.Target is Obj_AI_Hero)
             {
                 var t = args.Target as Obj_AI_Hero;
-                if (t.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null)) && ComboActive)
+                if (t.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null)) && ComboActive)
                 {
                     var useQ = Q.IsReady() && GetValue<bool>("UseQC");
                     if (useQ)
@@ -124,7 +122,7 @@ namespace Marksman.Champions
             {
                 return;
             }
-            if (!Marksman.Utils.Orbwalking.CanMove(100))
+            if (!Orbwalking.CanMove(100))
             {
                 return;
             }
@@ -136,7 +134,7 @@ namespace Marksman.Champions
             }
             else
             {
-                var attackRange = Marksman.Utils.Orbwalking.GetRealAutoAttackRange(Player);
+                var attackRange = Orbwalking.GetRealAutoAttackRange(Player);
                 TargetSelector.SetTarget(TargetSelector.GetTarget(attackRange, TargetSelector.DamageType.Physical));
             }
 
@@ -258,7 +256,7 @@ namespace Marksman.Champions
                         if (jE == 1)
                         {
                             jungleMobs = Utils.Utils.GetMobs(
-                                Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65,
+                                Orbwalking.GetRealAutoAttackRange(null) + 65,
                                 Utils.Utils.MobTypes.BigBoys);
                             if (jungleMobs != null)
                             {
@@ -272,10 +270,10 @@ namespace Marksman.Champions
                                     .Where(
                                         m =>
                                             m.Team == GameObjectTeam.Neutral &&
-                                            m.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 165))
+                                            m.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + 165))
                                     .Sum(mob => (int) mob.Health);
 
-                            totalAa = (int) (totalAa/ObjectManager.Player.TotalAttackDamage());
+                            totalAa = (int) (totalAa/ObjectManager.Player.TotalAttackDamage);
                             if (totalAa > jE)
                             {
                                 Q.Cast();
@@ -325,10 +323,10 @@ namespace Marksman.Champions
                                 .Where(
                                     m =>
                                         m.IsEnemy && !m.IsDead &&
-                                        m.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null)))
+                                        m.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null)))
                                 .Sum(mob => (int) mob.Health);
 
-                        totalAa = (int) (totalAa/ObjectManager.Player.TotalAttackDamage());
+                        totalAa = (int) (totalAa/ObjectManager.Player.TotalAttackDamage);
                         if (totalAa > jE)
                         {
                             Q.Cast();
@@ -344,36 +342,6 @@ namespace Marksman.Champions
             {
                 return;
             }
-
-            // Draw marked enemy status
-            //var drawEMarksStatus = GetValue<bool>("DrawEMarkStatus");
-            //var drawEMarkEnemy = GetValue<Circle>("DrawEMarkEnemy");
-            //if (drawEMarksStatus || drawEMarkEnemy.Active)
-            //{
-            //    var vText1 = font;
-            //    var getEMarkedEnemy = TristanaData.GetEMarkedEnemy;
-            //    if (getEMarkedEnemy != null)
-            //    {
-            //        if (drawEMarksStatus)
-            //        {
-            //            if (LastTickTime < Environment.TickCount)
-            //                LastTickTime = Environment.TickCount + 5000;
-            //            var xTime = LastTickTime - Environment.TickCount;
-
-            //            var timer = string.Format("0:{0:D2}", xTime/1000);
-            //            Utils.Utils.DrawText(vText1, TristanaData.GetEMarkedCount + " of 4 Stacks",
-            //                (int) getEMarkedEnemy.HPBarPosition.X + 145, (int) getEMarkedEnemy.HPBarPosition.Y + 5,
-            //                Color.Red);
-            //            Utils.Utils.DrawText(fontsmall, "End: " + timer, (int) getEMarkedEnemy.HPBarPosition.X + 145,
-            //                (int) getEMarkedEnemy.HPBarPosition.Y + 35, Color.White);
-            //        }
-
-            //        if (drawEMarkEnemy.Active)
-            //        {
-            //            Render.Circle.DrawCircle(TristanaData.GetEMarkedEnemy.Position, 140f, drawEMarkEnemy.Color, 1);
-            //        }
-            //    }
-            //}
 
             Spell[] spellList = {W};
             foreach (var spell in spellList)
@@ -573,7 +541,7 @@ namespace Marksman.Champions
                         attackDelay = (float) Math.Round(attackDelay, 2);
 
                         attackDelay *= 5;
-                        attackDelay *= (float) Math.Floor(Player.TotalAttackDamage());
+                        attackDelay *= (float) Math.Floor(Player.TotalAttackDamage);
                         fComboDamage += attackDelay;
                     }
                     */
@@ -602,7 +570,7 @@ namespace Marksman.Champions
                         .Where(
                             enemy =>
                                 !enemy.IsDead &&
-                                enemy.IsValidTarget(W.Range + Marksman.Utils.Orbwalking.GetRealAutoAttackRange(Player)))
+                                enemy.IsValidTarget(W.Range + Orbwalking.GetRealAutoAttackRange(Player)))
                         .FirstOrDefault(enemy => enemy.Buffs.Any(buff => buff.DisplayName == "TristanaEChargeSound"));
 
             public static int GetEMarkedCount

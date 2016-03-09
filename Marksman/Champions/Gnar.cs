@@ -31,7 +31,7 @@ namespace Marksman.Champions
 
         public override void Game_OnGameUpdate(EventArgs args)
         {
-            if (!Marksman.Utils.Orbwalking.CanMove(100))
+            if (!Orbwalking.CanMove(100))
                 return;
 
             var useQ = GetValue<bool>("UseQ" + (ComboActive ? "C" : "H"));

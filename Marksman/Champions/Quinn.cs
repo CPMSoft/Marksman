@@ -138,7 +138,7 @@ namespace Marksman.Champions
                     e => e.Buffs.Any(b => b.Name.ToLower() == "quinnw_cosmetic" && e.IsValidTarget(E.Range)));
             if (enemy != null)
             {
-                if (enemy.Distance(ObjectManager.Player.Position) > Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65)
+                if (enemy.Distance(ObjectManager.Player.Position) > Orbwalking.GetRealAutoAttackRange(null) + 65)
                 {
                     ObjectManager.Player.IssueOrder(GameObjectOrder.MoveTo, enemy);
                 }
@@ -159,7 +159,7 @@ namespace Marksman.Champions
                 var useQ = GetValue<bool>("UseQ" + (ComboActive ? "C" : "H"));
                 var useE = GetValue<bool>("UseE" + (ComboActive ? "C" : "H"));
 
-                if (Marksman.Utils.Orbwalking.CanMove(100))
+                if (Orbwalking.CanMove(100))
                 {
                     if (E.IsReady() && useE)
                     {
@@ -195,7 +195,7 @@ namespace Marksman.Champions
         {
             if (Q.IsReady())
             {
-                var jQ = Marksman.Utils.Utils.GetMobs(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65, Marksman.Utils.Utils.MobTypes.All);
+                var jQ = Marksman.Utils.Utils.GetMobs(Orbwalking.GetRealAutoAttackRange(null) + 65, Marksman.Utils.Utils.MobTypes.All);
                 if (jQ != null)
                 {
                     switch (GetValue<StringList>("UseQJ").SelectedIndex)
@@ -207,7 +207,7 @@ namespace Marksman.Champions
                             }
                         case 2:
                             {
-                                jQ = Utils.Utils.GetMobs(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65, Utils.Utils.MobTypes.BigBoys);
+                                jQ = Utils.Utils.GetMobs(Orbwalking.GetRealAutoAttackRange(null) + 65, Utils.Utils.MobTypes.BigBoys);
                                 if (jQ != null)
                                 {
                                     Q.Cast(jQ);

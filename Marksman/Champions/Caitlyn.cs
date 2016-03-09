@@ -5,7 +5,7 @@ using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
 using Color = System.Drawing.Color;
-using Orbwalking = Marksman.Utils.Orbwalking;
+
 
 #endregion
 
@@ -127,7 +127,9 @@ namespace Marksman.Champions
             var rCircle2 = Program.Config.Item("Draw.UltiMiniMap").GetValue<Circle>();
             if (rCircle2.Active)
             {
+#pragma warning disable 618
                 Utility.DrawCircle(ObjectManager.Player.Position, R.Range, rCircle2.Color, 1, 23, true);
+#pragma warning restore 618
             }
         }
 
@@ -155,7 +157,7 @@ namespace Marksman.Champions
                     && (t.HasBuffOfType(BuffType.Stun) || t.HasBuffOfType(BuffType.Snare)
                         || t.HasBuffOfType(BuffType.Taunt)
                         && (t.Health <= ObjectManager.Player.GetSpellDamage(t, SpellSlot.Q)
-                            || !Marksman.Utils.Orbwalking.InAutoAttackRange(t))))
+                            || !Orbwalking.InAutoAttackRange(t))))
                 {
                     Q.Cast(t, false, true);
                 }
@@ -201,7 +203,7 @@ namespace Marksman.Champions
             }
 
             // PQ you broke it D:
-            if ((!ComboActive && !HarassActive) || !Marksman.Utils.Orbwalking.CanMove(100)) return;
+            if ((!ComboActive && !HarassActive) || !Orbwalking.CanMove(100)) return;
 
             var useQ = GetValue<bool>("UseQ" + (ComboActive ? "C" : "H"));
             var useE = GetValue<bool>("UseEC");
@@ -227,7 +229,7 @@ namespace Marksman.Champions
             if (R.IsReady() && useR)
             {
                 t = TargetSelector.GetTarget(R.Range, TargetSelector.DamageType.Physical);
-                if (t != null && t.Health <= R.GetDamage(t) && !Marksman.Utils.Orbwalking.InAutoAttackRange(t) && canCastR)
+                if (t != null && t.Health <= R.GetDamage(t) && !Orbwalking.InAutoAttackRange(t) && canCastR)
                 {
                     R.CastOnUnit(t);
                 }

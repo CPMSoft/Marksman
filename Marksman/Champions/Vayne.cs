@@ -92,14 +92,14 @@ namespace Marksman.Champions
                     }
                     else
                     {
-                        var attackRange = Marksman.Utils.Orbwalking.GetRealAutoAttackRange(ObjectManager.Player);
+                        var attackRange = Orbwalking.GetRealAutoAttackRange(ObjectManager.Player);
                         TargetSelector.SetTarget(
                             TargetSelector.GetTarget(attackRange, TargetSelector.DamageType.Physical));
                     }
                 }
 
                 var useQ = GetValue<StringList>("Combo.UseQ").SelectedIndex;
-                var t = TargetSelector.GetTarget(Q.Range + Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null),
+                var t = TargetSelector.GetTarget(Q.Range + Orbwalking.GetRealAutoAttackRange(null),
                     TargetSelector.DamageType.Physical);
                 if (Q.IsReady() && t.IsValidTarget() && useQ != 0)
                 {
@@ -126,7 +126,7 @@ namespace Marksman.Champions
                         case 3:
                         {
                             if (t.Distance(ObjectManager.Player.Position) >
-                                Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) &&
+                                Orbwalking.GetRealAutoAttackRange(null) &&
                                 Q.IsPositionSafe(t.Position.To2D()))
                             {
                                 Q.Cast(t.Position);
@@ -202,7 +202,7 @@ namespace Marksman.Champions
         public void ExecJungleClear()
         {
             var jungleMobs =
-                Marksman.Utils.Utils.GetMobs(Q.Range + Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65,
+                Marksman.Utils.Utils.GetMobs(Q.Range + Orbwalking.GetRealAutoAttackRange(null) + 65,
                     Marksman.Utils.Utils.MobTypes.All);
 
             if (jungleMobs != null)
@@ -214,9 +214,9 @@ namespace Marksman.Champions
                         if (!jungleMobs.SkinName.ToLower().Contains("baron") ||
                             !jungleMobs.SkinName.ToLower().Contains("dragon"))
                         {
-                            if (jungleMobs.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65))
+                            if (jungleMobs.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + 65))
                                 Q.Cast(
-                                    jungleMobs.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65)
+                                    jungleMobs.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + 65)
                                         ? Game.CursorPos
                                         : jungleMobs.Position);
                         }
@@ -229,12 +229,12 @@ namespace Marksman.Champions
                         {
                             jungleMobs =
                                 Marksman.Utils.Utils.GetMobs(
-                                    Q.Range + Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65,
+                                    Q.Range + Orbwalking.GetRealAutoAttackRange(null) + 65,
                                     Marksman.Utils.Utils.MobTypes.BigBoys);
                             if (jungleMobs != null)
                             {
                                 Q.Cast(
-                                    jungleMobs.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65)
+                                    jungleMobs.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + 65)
                                         ? Game.CursorPos
                                         : jungleMobs.Position);
                             }
@@ -412,7 +412,7 @@ namespace Marksman.Champions
                     break;
                 case 2:
                     Render.Circle.DrawCircle(ObjectManager.Player.Position,
-                        Q.Range + Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65, System.Drawing.Color.Aqua);
+                        Q.Range + Orbwalking.GetRealAutoAttackRange(null) + 65, System.Drawing.Color.Aqua);
                     break;
             }
         }
@@ -444,7 +444,7 @@ namespace Marksman.Champions
                                     !enemy.IsDead &&
                                     enemy.IsValidTarget(
                                         (Q.IsReady() ? Q.Range : 0) +
-                                        Marksman.Utils.Orbwalking.GetRealAutoAttackRange(ObjectManager.Player)))
+                                        Orbwalking.GetRealAutoAttackRange(ObjectManager.Player)))
                             .FirstOrDefault(
                                 enemy => enemy.Buffs.Any(buff => buff.Name == "vaynesilvereddebuff" && buff.Count > 0));
                 }

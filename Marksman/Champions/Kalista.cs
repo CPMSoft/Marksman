@@ -101,7 +101,7 @@ namespace Marksman.Champions
         public override void Orbwalking_AfterAttack(AttackableUnit unit, AttackableUnit target)
         {
 
-            if (Orbwalker.ActiveMode == Marksman.Utils.Orbwalking.OrbwalkingMode.Combo && GetValue<bool>("Combo.UseQ") && Q.IsReady())
+            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo && GetValue<bool>("Combo.UseQ") && Q.IsReady())
             {
                 var enemy = target as Obj_AI_Hero;
                 if (enemy != null)
@@ -297,7 +297,7 @@ namespace Marksman.Champions
 
             if (ComboActive || HarassActive)
             {
-                if (Marksman.Utils.Orbwalking.CanMove(100))
+                if (Orbwalking.CanMove(100))
                 {
                     if (Q.IsReady())
                     {
@@ -391,7 +391,7 @@ namespace Marksman.Champions
 
             if (sender.IsMe && args.SData.Name == E.Instance.Name)
             {
-                Utility.DelayAction.Add(250, Marksman.Utils.Orbwalking.ResetAutoAttackTimer);
+                Utility.DelayAction.Add(250, Orbwalking.ResetAutoAttackTimer);
             }
         }
 
@@ -564,8 +564,8 @@ namespace Marksman.Champions
                         ObjectManager.Get<Obj_AI_Minion>()
                         .Where(
                             m =>
-                            m.Health > ObjectManager.Player.TotalAttackDamage()
-                            && m.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65))
+                            m.Health > ObjectManager.Player.TotalAttackDamage
+                            && m.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + 65))
                     select m;
                 if (prepareMinions == 2)
                 {
@@ -585,7 +585,7 @@ namespace Marksman.Champions
                         list.Remove(m);
                     }
                 }
-                var enemy = HeroManager.Enemies.Find(e => e.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65));
+                var enemy = HeroManager.Enemies.Find(e => e.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + 65));
                 if (enemy == null)
                 {
                     foreach (var l in objAiMinions.Except(list).ToList())
@@ -623,7 +623,7 @@ namespace Marksman.Champions
                             {
                                 if (GetValue<StringList>("UseQ.Mode.Lane").SelectedIndex == 1
                                     && colminion.Distance(ObjectManager.Player)
-                                    > Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65)
+                                    > Orbwalking.GetRealAutoAttackRange(null) + 65)
                                 {
                                     killableMinionCount++;
                                 }
@@ -689,7 +689,7 @@ namespace Marksman.Champions
                         {
                             E.Cast(n);
                         }
-                        else if (Q.IsReady() && Q.CanCast(n) && n.Distance(ObjectManager.Player.Position) < Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 75)
+                        else if (Q.IsReady() && Q.CanCast(n) && n.Distance(ObjectManager.Player.Position) < Orbwalking.GetRealAutoAttackRange(null) + 75)
                         {
                             xH = HealthPrediction.GetHealthPrediction( n, (int)(ObjectManager.Player.AttackCastDelay * 1000), (int)Q.Speed);
                             if (xH < 0)
@@ -726,7 +726,11 @@ namespace Marksman.Champions
                     E.Cast();
                 }
             }
+
+            //if (Orbwalking.LastAATick + (ObjectManager.Player.AttackCastDelay * 1000) > LeagueSharp.Common.Utils.GameTimeTickCount)
+
             //if (Marksman.Utils.Orbwalking.LastAATick + (ObjectManager.Player.AttackCastDelay * 1000) > LeagueSharp.Common.Utils.GameTimeTickCount)
+
             //{
             //    var mm = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, E.Range);
 

@@ -30,7 +30,6 @@ namespace Marksman.Champions
         public static Spell Q;
         public Spell E;
         public Spell W;
-        private Menu _menuSupportedSpells;
         public static List<DangerousSpells> DangerousList = new List<DangerousSpells>();
 
         public Sivir()
@@ -58,7 +57,7 @@ namespace Marksman.Champions
             Utils.PrintMessage("Sivir loaded.");
         }
 
-        public override void Orbwalking_BeforeAttack(Marksman.Utils.Orbwalking.BeforeAttackEventArgs args)
+        public override void Orbwalking_BeforeAttack(Orbwalking.BeforeAttackEventArgs args)
         {
             if (!W.IsReady())
             {
@@ -186,7 +185,7 @@ namespace Marksman.Champions
                     {
                         if (jW == 1)
                         {
-                            jungleMobs = Utils.GetMobs(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65,
+                            jungleMobs = Utils.GetMobs(Orbwalking.GetRealAutoAttackRange(null) + 65,
                                 Utils.MobTypes.BigBoys);
                             if (jungleMobs != null)
                             {
@@ -200,9 +199,9 @@ namespace Marksman.Champions
                                     .Where(
                                         m =>
                                             m.Team == GameObjectTeam.Neutral &&
-                                            m.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 165))
+                                            m.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + 165))
                                     .Sum(mob => (int) mob.Health);
-                            totalAa = (int) (totalAa/ObjectManager.Player.TotalAttackDamage());
+                            totalAa = (int) (totalAa/ObjectManager.Player.TotalAttackDamage);
                             if (totalAa > jW)
                             {
                                 W.Cast();
@@ -236,7 +235,7 @@ namespace Marksman.Champions
             if (wJ != 0)
             {
                 var minionsW = MinionManager.GetMinions(ObjectManager.Player.ServerPosition,
-                    Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 165, MinionTypes.All);
+                    Orbwalking.GetRealAutoAttackRange(null) + 165, MinionTypes.All);
                 if (minionsW != null && minionsW.Count >= wJ)
                 {
                     if (W.IsReady())

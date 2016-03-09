@@ -24,7 +24,7 @@ namespace Marksman.Utils
     {
         public static string Tab => "    ";
 
-        public static Font FontX, Text, TextBig, SmallText, TextWarning;
+        public static Font Text, TextBig, SmallText, TextWarning;
         static Utils()
         {
             /*
@@ -435,7 +435,7 @@ namespace Marksman.Utils
         {
             var totalAa = ObjectManager.Get<Obj_AI_Minion>().Where(m => m.IsValidTarget(spell.Range)).Sum(mob => (int)mob.Health);
 
-            totalAa = (int)(totalAa / ObjectManager.Player.TotalAttackDamage());
+            totalAa = (int)(totalAa / ObjectManager.Player.TotalAttackDamage);
             return totalAa >= minionCount;
         }
 
@@ -443,7 +443,7 @@ namespace Marksman.Utils
         {
             var totalAa = ObjectManager.Get<Obj_AI_Minion>().Where(m => m.IsValidTarget(range)).Sum(mob => (int)mob.Health);
 
-            totalAa = (int)(totalAa / ObjectManager.Player.TotalAttackDamage());
+            totalAa = (int)(totalAa / ObjectManager.Player.TotalAttackDamage);
             return totalAa >= minionCount;
         }
 
@@ -792,7 +792,7 @@ namespace Marksman.Utils
 
                 return
                     mobTeams.Where(
-                        hp => mob.Distance(hp.Key) <= (Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null)*2))
+                        hp => mob.Distance(hp.Key) <= (Orbwalking.GetRealAutoAttackRange(null)*2))
                         .Select(hp => hp.Value)
                         .FirstOrDefault();
             }

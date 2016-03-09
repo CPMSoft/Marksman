@@ -5,7 +5,7 @@ using LeagueSharp;
 using LeagueSharp.Common;
 using SharpDX;
 using Color = System.Drawing.Color;
-using Orbwalking = Marksman.Utils.Orbwalking;
+
 
 namespace Marksman.Champions
 {
@@ -98,7 +98,9 @@ namespace Marksman.Champions
             {
                 var maxRRange = Config.Item("UseRCMaxR").GetValue<Slider>().Value;
                 var rMax = Config.Item("DrawRMax").GetValue<Circle>();
+#pragma warning disable 618
                 Utility.DrawCircle(ObjectManager.Player.Position, maxRRange, rMax.Color, 1, 23, true);
+#pragma warning restore 618
             }
         }
 
@@ -124,7 +126,7 @@ namespace Marksman.Champions
             if (drawCatchRadius.Active)
             {
                 if (GetOrbwalkPos() != Game.CursorPos &&
-                    (ComboActive || LaneClearActive || Orbwalker.ActiveMode == Marksman.Utils.Orbwalking.OrbwalkingMode.LastHit))
+                    (ComboActive || LaneClearActive || Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LastHit))
                 {
                     Render.Circle.DrawCircle(Game.CursorPos, Config.Item("CatchRadius").GetValue<Slider>().Value,
                         Color.Red);
@@ -162,13 +164,13 @@ namespace Marksman.Champions
             var orbwalkPos = GetOrbwalkPos();
             var cursor = Game.CursorPos;
             if (orbwalkPos != cursor &&
-                (ComboActive || LaneClearActive || Orbwalker.ActiveMode == Marksman.Utils.Orbwalking.OrbwalkingMode.LastHit))
+                (ComboActive || LaneClearActive || Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LastHit))
             {
-                Orbwalking.Orbwalker.SetOrbwalkingPoint(orbwalkPos);
+                Orbwalker.SetOrbwalkingPoint(orbwalkPos);
             }
             else
             {
-                Orbwalking.Orbwalker.SetOrbwalkingPoint(cursor);
+                Orbwalker.SetOrbwalkingPoint(cursor);
             }
             Obj_AI_Hero t;
             //Combo
@@ -182,7 +184,7 @@ namespace Marksman.Champions
                 {
                     return;
                 }
-                if (W.IsReady() && Config.Item("UseWC").GetValue<bool>() && t.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65) &&
+                if (W.IsReady() && Config.Item("UseWC").GetValue<bool>() && t.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + 65) &&
                     ObjectManager.Player.Buffs.FirstOrDefault(
                         buff => buff.Name == "dravenfurybuff" || buff.Name == "DravenFury") == null)
                 {

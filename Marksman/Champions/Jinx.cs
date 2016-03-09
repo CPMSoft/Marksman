@@ -8,7 +8,7 @@ using LeagueSharp.Common;
 using Marksman.Utils;
 using SharpDX;
 using Color = SharpDX.Color;
-using Orbwalking = Marksman.Utils.Orbwalking;
+
 
 #endregion
 
@@ -157,7 +157,7 @@ namespace Marksman.Champions
         public override void Game_OnGameUpdate(EventArgs args)
         {
             /*
-            var x = HeroManager.Enemies.Find(e => !e.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null)) && e.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + QAddRange));
+            var x = HeroManager.Enemies.Find(e => !e.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null)) && e.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + QAddRange));
             if (x != null && !FishBoneActive && Q.IsReady())
             {
                 Q.Cast();

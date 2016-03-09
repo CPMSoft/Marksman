@@ -106,14 +106,23 @@ namespace Marksman.Champions
 
         public override void Drawing_OnDraw(EventArgs args)
         {
+            Spell[] spellList = { Q, Q2, W, E, R };
+            foreach (var spell in spellList)
+            {
+                var menuItem = GetValue<Circle>("Draw" + spell.Slot);
+                if (!menuItem.Active || spell.Level < 0 && spell.IsReady()) return;
+
+                Render.Circle.DrawCircle(ObjectManager.Player.Position, spell.Range, menuItem.Color);
+            }
+
             return;
-            var t = TargetSelector.GetTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) * 2, TargetSelector.DamageType.Physical);
+            var t = TargetSelector.GetTarget(Orbwalking.GetRealAutoAttackRange(null) * 2, TargetSelector.DamageType.Physical);
             if (t.IsValidTarget())
             {
-                var targetBehind = ObjectManager.Player.Position + Vector3.Normalize(ObjectManager.Player.Position - t.ServerPosition) * (Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) - ObjectManager.Player.Distance(t.Position));
+                var targetBehind = ObjectManager.Player.Position + Vector3.Normalize(ObjectManager.Player.Position - t.ServerPosition) * (Orbwalking.GetRealAutoAttackRange(null) - ObjectManager.Player.Distance(t.Position));
                 if (ObjectManager.Player.Distance(targetBehind) > ObjectManager.Player.BoundingRadius)
                 {
-                    Marksman.Utils.Orbwalking.Orbwalker.SetOrbwalkingPoint(targetBehind);
+                    Orbwalker.SetOrbwalkingPoint(targetBehind);
                     ObjectManager.Player.IssueOrder(GameObjectOrder.MoveTo, targetBehind);
                 }
                 Render.Circle.DrawCircle(t.Position, 85f, Color.DarkRed);
@@ -124,14 +133,7 @@ namespace Marksman.Champions
             Drawing.DrawText(heropos.X, heropos.Y, Color.GreenYellow, "[AL]: " + xAttackLeft);
 
 
-            Spell[] spellList = { Q, Q2, W, E, R };
-            foreach (var spell in spellList)
-            {
-                var menuItem = GetValue<Circle>("Draw" + spell.Slot);
-                if (!menuItem.Active || spell.Level < 0 && spell.IsReady()) return;
 
-                Render.Circle.DrawCircle(ObjectManager.Player.Position, spell.Range, menuItem.Color);
-            }
         }
 
         public static bool Intersection(Vector2 p1, Vector2 p2, Vector2 pC, float radius)
@@ -185,7 +187,7 @@ namespace Marksman.Champions
             {
                 return;
             }
-
+            
             Obj_AI_Hero t;
 
             if (Q.IsReady() && GetValue<KeyBind>("UseQTH").Active && ToggleActive)
@@ -197,8 +199,8 @@ namespace Marksman.Champions
                 if (t != null)
                     Q.CastOnUnit(t);
             }
-
             
+
             if (Q.IsReady() && GetValue<KeyBind>("UseQExtendedTH").Active && ToggleActive)
             {
                 if (ObjectManager.Player.HasBuff("Recall"))
@@ -212,7 +214,7 @@ namespace Marksman.Champions
                 }
             }
 
-
+            
             if ((!ComboActive && !HarassActive)) return;
             var useQExtended = GetValue<StringList>("UseQExtendedC").SelectedIndex;
             if (useQExtended != 0)
@@ -225,7 +227,7 @@ namespace Marksman.Champions
                         var tx = QMinion(t);
                         if (tx.IsValidTarget())
                         {
-                            if (!Marksman.Utils.Orbwalking.InAutoAttackRange(t))
+                            if (!Orbwalking.InAutoAttackRange(t))
                                 Q.CastOnUnit(tx);
                         }
                         break;
@@ -259,7 +261,7 @@ namespace Marksman.Champions
             //    var t = TargetSelector.GetTarget(Q2.Range, TargetSelector.DamageType.Physical);
             //    if (t.IsValidTarget() && QMinion.IsValidTarget())
             //    {
-            //        if (!Marksman.Utils.Orbwalking.InAutoAttackRange(t))
+            //        if (!Orbwalking.InAutoAttackRange(t))
             //            Q.CastOnUnit(QMinion);
             //    }
             //}
@@ -353,7 +355,7 @@ namespace Marksman.Champions
             if (jungleEValue != 0 && E.IsReady())
             {
                 var jungleMobs =
-                    Marksman.Utils.Utils.GetMobs(Q.Range + Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65,
+                    Marksman.Utils.Utils.GetMobs(Q.Range + Orbwalking.GetRealAutoAttackRange(null) + 65,
                         Marksman.Utils.Utils.MobTypes.All);
 
                 if (jungleMobs != null)
@@ -365,10 +367,10 @@ namespace Marksman.Champions
                                 if (!jungleMobs.SkinName.ToLower().Contains("baron") ||
                                     !jungleMobs.SkinName.ToLower().Contains("dragon"))
                                 {
-                                    if (jungleMobs.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65))
+                                    if (jungleMobs.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + 65))
                                         E.Cast(
                                             jungleMobs.IsValidTarget(
-                                                Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65)
+                                                Orbwalking.GetRealAutoAttackRange(null) + 65)
                                                 ? Game.CursorPos
                                                 : jungleMobs.Position);
                                 }
@@ -382,13 +384,13 @@ namespace Marksman.Champions
                                 {
                                     jungleMobs =
                                         Marksman.Utils.Utils.GetMobs(
-                                            E.Range + Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65,
+                                            E.Range + Orbwalking.GetRealAutoAttackRange(null) + 65,
                                             Marksman.Utils.Utils.MobTypes.BigBoys);
                                     if (jungleMobs != null)
                                     {
                                         E.Cast(
                                             jungleMobs.IsValidTarget(
-                                                Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65)
+                                                Orbwalking.GetRealAutoAttackRange(null) + 65)
                                                 ? Game.CursorPos
                                                 : jungleMobs.Position);
                                     }
@@ -516,13 +518,17 @@ namespace Marksman.Champions
 
         public override void PermaActive()
         {
-            return;
-            var enemy = HeroManager.Enemies.Find(e => e.IsValidTarget(E.Range + (Q.IsReady() ? Q.Range : Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65)) && !e.IsZombie);
+            if (Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Combo)
+            {
+                return;
+            }
+
+            var enemy = HeroManager.Enemies.Find(e => e.IsValidTarget(E.Range + (Q.IsReady() ? Q.Range : Orbwalking.GetRealAutoAttackRange(null) + 65)) && !e.IsZombie);
             if (enemy != null)
             {
                 if (enemy.Health < ObjectManager.Player.TotalAttackDamage*2)
                 {
-                    if (enemy.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65))
+                    if (enemy.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + 65))
                     {
                         if (!Q.IsReady())
                         {
@@ -543,7 +549,7 @@ namespace Marksman.Champions
 
                 if (enemy.Health < xPossibleComboDamage)
                 {
-//                    if (enemy.Distance(ObjectManager.Player) > Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65))
+//                    if (enemy.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(null) + 65))
                 }
 
                 if (E.IsReady() && Q.IsReady())

@@ -115,9 +115,6 @@ namespace Marksman.Evade
             SkillshotDetector.OnDetectSkillshot += OnDetectSkillshot;
             SkillshotDetector.OnDeleteMissile += SkillshotDetectorOnOnDeleteMissile;
 
-            //For skillshot drawing.
-            Drawing.OnDraw += Drawing_OnDraw;
-
             //Ondash event.
             CustomEvents.Unit.OnDash += UnitOnOnDash;
 
@@ -1217,34 +1214,6 @@ namespace Marksman.Evade
             }
 
             NoSolutionFound = true;
-        }
-
-        private static void Drawing_OnDraw(EventArgs args)
-        {
-            return;
-            if (!Config.Menu.Item("Enabled").GetValue<bool>() || !Config.Menu.Item("EnableDrawings").GetValue<bool>())
-            {
-                return;
-            }
-            if (Config.Menu.Item("ShowEvadeStatus").GetValue<bool>())
-            {
-                var heropos = Drawing.WorldToScreen(ObjectManager.Player.Position);
-                if (Config.Menu.Item("Enabled").GetValue<KeyBind>().Active)
-                {
-                    Drawing.DrawText(heropos.X - ObjectManager.Player.BoundingRadius, heropos.Y+30, Color.Red, "Marksman Evade: ON");
-                }
-            }
-            var Border = Config.Menu.Item("Border").GetValue<Slider>().Value;
-            var missileColor = Config.Menu.Item("MissileColor").GetValue<Color>();
-            
-            //Draw the polygon for each skillshot.
-            foreach (var skillshot in DetectedSkillshots)
-            {
-                skillshot.Draw(
-                    (skillshot.Evade() && Config.Menu.Item("Enabled").GetValue<KeyBind>().Active)
-                        ? Config.Menu.Item("EnabledColor").GetValue<Color>()
-                        : Config.Menu.Item("DisabledColor").GetValue<Color>(), missileColor, Border);
-            }
         }
 
         public struct IsSafeResult

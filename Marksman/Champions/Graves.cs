@@ -84,7 +84,7 @@ namespace Marksman.Champions
             }
 
 
-            if ((!ComboActive && !HarassActive) || !Marksman.Utils.Orbwalking.CanMove(100)) return;
+            if ((!ComboActive && !HarassActive) || !Orbwalking.CanMove(100)) return;
             var useQ = GetValue<bool>("UseQ" + (ComboActive ? "C" : "H"));
             var useW = GetValue<bool>("UseW" + (ComboActive ? "C" : "H"));
             var useR = GetValue<bool>("UseR" + (ComboActive ? "C" : "H"));

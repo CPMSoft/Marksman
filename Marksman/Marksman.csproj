@@ -102,7 +102,6 @@
     <Compile Include="Champions\Corki.cs" />
     <Compile Include="Utils\ExecutedTime.cs" />
     <Compile Include="Utils\IncomingDangerous.cs" />
-    <Compile Include="Utils\Orbwalking.cs" />
     <Compile Include="Utils\Sprite.cs" />
     <Compile Include="Champions\Draven.cs" />
     <Compile Include="Champions\Ezreal.cs" />

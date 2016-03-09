@@ -188,7 +188,7 @@ namespace Marksman.Champions
                 var useW = GetValue<bool>("UseW" + (ComboActive ? "C" : "H"));
                 var useR = Program.Config.SubMenu("Combo").Item("UseRC").GetValue<bool>();
 
-                if (Marksman.Utils.Orbwalking.CanMove(100) && !t.HasKindredUltiBuff())
+                if (Orbwalking.CanMove(100) && !t.HasKindredUltiBuff())
                 {
                     if (useQ && Q.IsReady() && t.IsValidTarget(Q.Range))
                     {

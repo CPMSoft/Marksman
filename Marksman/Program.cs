@@ -11,7 +11,7 @@ using Marksman.Utils;
 using SharpDX;
 using SharpDX.Direct3D9;
 using Activator = Marksman.Utils.Activator;
-using Orbwalking = Marksman.Utils.Orbwalking;
+
 
 #endregion
 
@@ -45,8 +45,6 @@ namespace Marksman
         //public static Utils.EarlyEvade EarlyEvade;
 
         public static double ActivatorTime;
-
-        private static Obj_AI_Hero xSelectedTarget;
 
         private static float AsmLoadingTime = 0;
 
@@ -152,7 +150,7 @@ namespace Marksman
             CClass.Config = Config;
 
             OrbWalking = Config.AddSubMenu(new Menu("Orbwalking", "Orbwalking"));
-            CClass.Orbwalker = new Marksman.Utils.Orbwalking.Orbwalker(OrbWalking);
+            CClass.Orbwalker = new Orbwalking.Orbwalker(OrbWalking);
 
             OrbWalking.AddItem(new MenuItem("Orb.AutoWindUp", "Marksman - Auto Windup").SetValue(false)).ValueChanged +=
                 (sender, argsEvent) => { if (argsEvent.GetNewValue<bool>()) CheckAutoWindUp(); };
@@ -451,8 +449,8 @@ namespace Marksman
                 PermaActive();
             };
 
-            Marksman.Utils.Orbwalking.AfterAttack += Orbwalking_AfterAttack;
-            Marksman.Utils.Orbwalking.BeforeAttack += Orbwalking_BeforeAttack;
+            Orbwalking.AfterAttack += Orbwalking_AfterAttack;
+            Orbwalking.BeforeAttack += Orbwalking_BeforeAttack;
             GameObject.OnCreate += OnCreateObject;
             GameObject.OnDelete += OnDeleteObject;
 
@@ -552,7 +550,7 @@ namespace Marksman
             if (Config.Item("Draw.KillableEnemy").GetValue<bool>())
             {
                 var t = KillableEnemyAa;
-                if (t.Key != null && t.Key.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 1000) && t.Value > 0)
+                if (t.Key != null && t.Key.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + 1000) && t.Value > 0)
                 {
                     Utils.Utils.DrawText(Utils.Utils.Text, string.Format("{0}: {1} x AA Damage = Kill", t.Key.ChampionName, t.Value), (int)t.Key.HPBarPosition.X + 145, (int)t.Key.HPBarPosition.Y + 5, SharpDX.Color.White);
                 }
@@ -651,11 +649,11 @@ namespace Marksman
 
                 if (drawMinionLastHit == 1)
                 {
-                    mx = mx.Where(m => m.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65));
+                    mx = mx.Where(m => m.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + 65));
                 }
                 else
                 {
-                    mx = mx.Where(m => m.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65 + 300) && m.Distance(ObjectManager.Player.Position) > Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65);
+                    mx = mx.Where(m => m.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + 65 + 300) && m.Distance(ObjectManager.Player.Position) > Orbwalking.GetRealAutoAttackRange(null) + 65);
                 }
 
                 foreach (var minion in mx)
@@ -682,7 +680,7 @@ namespace Marksman
             //{
 
             //}
-            //var shenVorpalStar = HeroManager.Enemies.Find(e => e.Buffs.Any(b => b.Name.ToLower() == "shenvorpalstar" && e.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65)));
+            //var shenVorpalStar = HeroManager.Enemies.Find(e => e.Buffs.Any(b => b.Name.ToLower() == "shenvorpalstar" && e.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + 65)));
             //if (shenVorpalStar != null)
             //{
             //    CClass.Orbwalker.ForceTarget(shenVorpalStar);
@@ -694,23 +692,22 @@ namespace Marksman
 
             //}
 
-            //var enemy = HeroManager.Enemies.Find(e => e.Buffs.Any(b => b.Name.ToLower() == "Tahmmark" && e.IsValidTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 65)));
+            //var enemy = HeroManager.Enemies.Find(e => e.Buffs.Any(b => b.Name.ToLower() == "Tahmmark" && e.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + 65)));
             //if (enemy != null)
             //{
             //    CClass.Orbwalker.ForceTarget(enemy);
             //}
-            
-            /*-------------------------------------------------------------*/
 
+            /*-------------------------------------------------------------*/
+            
             if (Items.HasItem(3139) || Items.HasItem(3140))
             {
                 CheckChampionBuff();
             }
-
+            
             //Update the combo and harass values.
             CClass.ComboActive = CClass.Config.Item("Orbwalk").GetValue<KeyBind>().Active;
-            CClass.FleeActive = CClass.Config.Item("Flee").GetValue<KeyBind>().Active;
-
+            
             var vHarassManaPer = Config.Item("HarassMana").GetValue<Slider>().Value;
             CClass.HarassActive = CClass.Config.Item("Farm").GetValue<KeyBind>().Active &&
                                   ObjectManager.Player.ManaPercent >= vHarassManaPer;
@@ -763,10 +760,10 @@ namespace Marksman
 
             //Items
             if (
-                !((CClass.Orbwalker.ActiveMode == Marksman.Utils.Orbwalking.OrbwalkingMode.Combo &&
+                !((CClass.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo &&
                    (useItemModes == 2 || useItemModes == 3))
                   ||
-                  (CClass.Orbwalker.ActiveMode == Marksman.Utils.Orbwalking.OrbwalkingMode.Mixed &&
+                  (CClass.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed &&
                    (useItemModes == 1 || useItemModes == 3))))
                 return;
 
@@ -779,7 +776,7 @@ namespace Marksman
             var smiteReady = (SmiteSlot != SpellSlot.Unknown &&
                               ObjectManager.Player.Spellbook.CanUseSpell(SmiteSlot) == SpellState.Ready);
 
-            if (smiteReady && CClass.Orbwalker.ActiveMode == Marksman.Utils.Orbwalking.OrbwalkingMode.Combo)
+            if (smiteReady && CClass.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
                 Smiteontarget(target as Obj_AI_Hero);
 
             if (botrk)
@@ -802,12 +799,12 @@ namespace Marksman
 
             if (ghostblade && target != null && target.Type == ObjectManager.Player.Type &&
                 !ObjectManager.Player.HasBuff("ItemSoTD", true) /*if Sword of the divine is not active */
-                && Marksman.Utils.Orbwalking.InAutoAttackRange(target))
+                && Orbwalking.InAutoAttackRange(target))
                 Items.UseItem(3142);
 
             if (sword && target != null && target.Type == ObjectManager.Player.Type &&
                 !ObjectManager.Player.HasBuff("spectralfury", true) /*if ghostblade is not active*/
-                && Marksman.Utils.Orbwalking.InAutoAttackRange(target))
+                && Orbwalking.InAutoAttackRange(target))
                 Items.UseItem(3131);
 
             if (muramana && Items.HasItem(3042))
@@ -889,7 +886,7 @@ namespace Marksman
             CClass.Orbwalking_AfterAttack(unit, target);
         }
 
-        private static void Orbwalking_BeforeAttack(Utils.Orbwalking.BeforeAttackEventArgs args)
+        private static void Orbwalking_BeforeAttack(Orbwalking.BeforeAttackEventArgs args)
         {
             CClass.Orbwalking_BeforeAttack(args);
         }
@@ -1088,7 +1085,7 @@ namespace Marksman
             get
             {
                 var x = 0;
-                var t = TargetSelector.GetTarget(Marksman.Utils.Orbwalking.GetRealAutoAttackRange(null) + 1400,
+                var t = TargetSelector.GetTarget(Orbwalking.GetRealAutoAttackRange(null) + 1400,
                     TargetSelector.DamageType.Physical);
                 {
                     if (t.IsValidTarget())

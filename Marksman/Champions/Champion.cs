@@ -18,7 +18,7 @@ namespace Marksman.Champions
         public Menu Config;
         
         public string Id = "";
-        public Marksman.Utils.Orbwalking.Orbwalker Orbwalker;
+        public Orbwalking.Orbwalker Orbwalker;
         public bool ToggleActive;
 
         public T GetValue<T>(string item)
@@ -91,7 +91,7 @@ namespace Marksman.Champions
         public virtual void PermaActive() { }
 
         public virtual void Orbwalking_AfterAttack(AttackableUnit unit, AttackableUnit target) { }
-        public virtual void Orbwalking_BeforeAttack(Utils.Orbwalking.BeforeAttackEventArgs args) { }
+        public virtual void Orbwalking_BeforeAttack(Orbwalking.BeforeAttackEventArgs args) { }
         public virtual void Spellbook_OnCastSpell(Spellbook sender, SpellbookCastSpellEventArgs args) { }
         public virtual void OnCreateObject(GameObject sender, EventArgs args) { }
         public virtual void OnDeleteObject(GameObject sender, EventArgs args) { }
