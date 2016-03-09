@@ -32,7 +32,7 @@ namespace Marksman.Champions
         {
             Utils.Utils.PrintMessage("Lucian loaded.");
 
-            Q = new Spell(SpellSlot.Q, 675);
+            Q = new Spell(SpellSlot.Q, 760);
             Q2 = new Spell(SpellSlot.Q, 1100);
             W = new Spell(SpellSlot.W, 1000);
 
@@ -430,7 +430,7 @@ namespace Marksman.Champions
             config.AddItem(new MenuItem("UseQExtendedC" + Id, "Q Extended:").SetValue(new StringList(new[] { "Off", "Use for Selected Target", "Use for Any Target" }, 1)));
             config.AddItem(new MenuItem("UseWC" + Id, "W:").SetValue(true));
             config.AddItem(new MenuItem("UseEC" + Id, "E:").SetValue(new StringList(new []{ "Off", "On", "On: Protect AA Range" }, 2)));
-            config.AddItem(new MenuItem("UseRC" + Id, "E:").SetValue(true));
+            //config.AddItem(new MenuItem("UseRC" + Id, "E:").SetValue(true));
             return true;
         }
 
@@ -532,13 +532,13 @@ namespace Marksman.Champions
                     {
                         if (!Q.IsReady())
                         {
-                            if (W.IsReady())
+                            if (W.IsReady() && GetValue<bool>("UseWC"))
                                 W.Cast();
                         }
                     }
                     else
                     {
-                        if (E.IsReady())
+                        if (E.IsReady() && GetValue<StringList>("UseEC").SelectedIndex != 0)
                             E.Cast(enemy.Position);
                     }
                 }
@@ -552,7 +552,7 @@ namespace Marksman.Champions
 //                    if (enemy.Distance(ObjectManager.Player) > Orbwalking.GetRealAutoAttackRange(null) + 65))
                 }
 
-                if (E.IsReady() && Q.IsReady())
+                if (E.IsReady() && Q.IsReady() && GetValue<StringList>("UseEC").SelectedIndex != 0)
                 {
                     E.Cast(enemy.Position);
                 }
