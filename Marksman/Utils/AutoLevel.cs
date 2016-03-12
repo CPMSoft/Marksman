@@ -162,6 +162,15 @@ namespace Marksman.Utils
             return b != "" ? b.Substring(0, b.Length - 2) : "";
         }
 
+        private static int GetRandomDelay
+        {
+            get
+            {
+                var rnd = new Random(DateTime.Now.Millisecond);
+                return rnd.Next(750, 1000);
+            }
+            
+        }
         private static void Game_OnUpdate(EventArgs args)
         {
             if (!LocalMenu.Item("AutoLevel.Active").GetValue<bool>())
@@ -187,22 +196,23 @@ namespace Marksman.Utils
 
             if (qLevel < level[0])
             {
-                ObjectManager.Player.Spellbook.LevelSpell(SpellSlot.Q);
+                Utility.DelayAction.Add(GetRandomDelay, () => ObjectManager.Player.Spellbook.LevelSpell(SpellSlot.Q));
+
             }
 
             if (wLevel < level[1])
             {
-                ObjectManager.Player.Spellbook.LevelSpell(SpellSlot.W);
+                Utility.DelayAction.Add(GetRandomDelay, () => ObjectManager.Player.Spellbook.LevelSpell(SpellSlot.W));
             }
 
             if (eLevel < level[2])
             {
-                ObjectManager.Player.Spellbook.LevelSpell(SpellSlot.E);
+                Utility.DelayAction.Add(GetRandomDelay, () => ObjectManager.Player.Spellbook.LevelSpell(SpellSlot.E));
             }
 
             if (rLevel < level[3])
             {
-                ObjectManager.Player.Spellbook.LevelSpell(SpellSlot.R);
+                Utility.DelayAction.Add(GetRandomDelay, () => ObjectManager.Player.Spellbook.LevelSpell(SpellSlot.R));
             }
         }
     }
