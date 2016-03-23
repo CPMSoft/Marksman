@@ -69,7 +69,7 @@ namespace Marksman.Champions
             Q = new Spell(SpellSlot.Q, 1150);
             W = new Spell(SpellSlot.W, 5000);
             E = new Spell(SpellSlot.E, 1000);
-            R = new Spell(SpellSlot.R, 1500);
+            R = new Spell(SpellSlot.R, 1100);
 
             Q.SetSkillshot(0.25f, 40f, 2100f, true, SkillshotType.SkillshotLine);
             W.SetSkillshot(0.25f, 80f, 1600f, false, SkillshotType.SkillshotLine);
