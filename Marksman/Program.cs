@@ -399,7 +399,7 @@ namespace Marksman
                 }
             }
 
-            if (Config.Item("Marksman.Compare.Set").GetValue<StringList>().SelectedIndex == 1)
+            if (Config.Item("Marksman.Compare.Set").GetValue<StringList>().SelectedIndex == 1 && ObjectManager.Player.Level < 6)
             {
                 LoadDefaultCompareChampion();
             }
@@ -562,7 +562,7 @@ namespace Marksman
             var myDeaths = ObjectManager.Player.Deaths;
             var myMinionsKilled = ObjectManager.Player.MinionsKilled;
 
-            if (Config.Item("Marksman.Compare.Set").GetValue<StringList>().SelectedIndex == 1)
+            if (Config.Item("Marksman.Compare.Set").GetValue<StringList>().SelectedIndex == 1 && ObjectManager.Player.Level < 6)
             {
                 if (Config.Item("Marksman.Compare").GetValue<StringList>().SelectedIndex != 0)
                 {
