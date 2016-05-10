@@ -290,7 +290,7 @@ namespace Marksman.Champions
             return false;
         }
 
-        public void ExecLaneClear()
+        public override void ExecuteLaneClear()
         {
             var useQ = Program.Config.Item("UseQL").GetValue<StringList>().SelectedIndex;
 
@@ -335,7 +335,7 @@ namespace Marksman.Champions
             return true;
         }
 
-        public void ExecJungleClear()
+        public override void ExecuteJungleClear()
         {
             var jungleMobs = Marksman.Utils.Utils.GetMobs(Q.Range + Orbwalking.GetRealAutoAttackRange(null) + 65,
                 Marksman.Utils.Utils.MobTypes.All);
