@@ -25,6 +25,7 @@ namespace Marksman.Utils
         public static string Tab => "    ";
 
         public static Font Text, TextBig, SmallText, TextWarning;
+
         static Utils()
         {
             /*
@@ -45,14 +46,14 @@ namespace Marksman.Utils
             FontX = new Font(device, fontDescription);
             */
             TextBig = new Font(
-              Drawing.Direct3DDevice,
-              new FontDescription
-              {
-                  FaceName = "Segoe UI",
-                  Height = 25,
-                  OutputPrecision = FontPrecision.Default,
-                  Quality = FontQuality.Default
-              });
+                Drawing.Direct3DDevice,
+                new FontDescription
+                {
+                    FaceName = "Segoe UI",
+                    Height = 25,
+                    OutputPrecision = FontPrecision.Default,
+                    Quality = FontQuality.Default
+                });
 
             Text = new Font(
                 Drawing.Direct3DDevice,
@@ -74,13 +75,42 @@ namespace Marksman.Utils
                 });
 
             TextWarning = new Font(Drawing.Direct3DDevice,
-                           new FontDescription
-                           {
-                               FaceName = "Malgun Gothic",
-                               Height = 60,
-                               OutputPrecision = FontPrecision.Default,
-                               Quality = FontQuality.Default
-                           });
+                new FontDescription
+                {
+                    FaceName = "Malgun Gothic",
+                    Height = 60,
+                    OutputPrecision = FontPrecision.Default,
+                    Quality = FontQuality.Default
+                });
+
+            Drawing.OnPreReset += DrawingOnOnPreReset;
+            Drawing.OnPostReset += DrawingOnOnPostReset;
+            AppDomain.CurrentDomain.DomainUnload += CurrentDomainOnDomainUnload;
+            AppDomain.CurrentDomain.ProcessExit += CurrentDomainOnDomainUnload;
+        }
+
+        private static void CurrentDomainOnDomainUnload(object sender, EventArgs eventArgs)
+        {
+            Text.Dispose();
+            TextBig.Dispose();
+            SmallText.Dispose();
+            TextWarning.Dispose();
+        }
+
+        private static void DrawingOnOnPostReset(EventArgs args)
+        {
+            Text.OnResetDevice();
+            TextBig.OnResetDevice();
+            SmallText.OnResetDevice();
+            TextWarning.OnResetDevice();
+        }
+
+        private static void DrawingOnOnPreReset(EventArgs args)
+        {
+            Text.OnLostDevice();
+            TextBig.OnLostDevice();
+            SmallText.OnLostDevice();
+            TextWarning.OnLostDevice();
         }
 
         public class MPing
@@ -89,9 +119,10 @@ namespace Marksman.Utils
 
             private static int LastPingT = 0;
 
-            public static void Ping(Vector2 position, int pingCount = 4, PingCategory pingCategory = PingCategory.Fallback)
+            public static void Ping(Vector2 position, int pingCount = 4,
+                PingCategory pingCategory = PingCategory.Fallback)
             {
-                if (LeagueSharp.Common.Utils.TickCount - LastPingT < 30 * 1000)
+                if (LeagueSharp.Common.Utils.TickCount - LastPingT < 30*1000)
                 {
                     return;
                 }
@@ -102,7 +133,7 @@ namespace Marksman.Utils
 
                 for (int i = 1; i <= pingCount; i++)
                 {
-                    Utility.DelayAction.Add(i * 400, (() =>
+                    Utility.DelayAction.Add(i*400, (() =>
                     {
                         Game.ShowPing(pingCategory, PingLocation, true);
                     }));
@@ -119,7 +150,7 @@ namespace Marksman.Utils
             {
                 S2C.Ping.Encoded(new S2C.Ping.Struct(PingLocation.X, PingLocation.Y, 0, 0, PingType.Fallback)).Process();
                 Game.ShowPing(pingCategory, PingLocation, true);
-                
+
             }
         }
 
@@ -158,10 +189,10 @@ namespace Marksman.Utils
         }
 
         private static readonly string[] BetterWithEvade =
-            {
-                "Corki", "Ezreal", "Graves", "Lucian", "Sivir", "Tristana",
-                "Caitlyn", "Vayne"
-            };
+        {
+            "Corki", "Ezreal", "Graves", "Lucian", "Sivir", "Tristana",
+            "Caitlyn", "Vayne"
+        };
 
         public static Obj_AI_Base GetMobs(float spellRange, MobTypes mobTypes = MobTypes.All, int minMobCount = 1)
         {
@@ -176,14 +207,14 @@ namespace Marksman.Utils
             if (mobTypes == MobTypes.BigBoys)
             {
                 Obj_AI_Base oMob = (from fMobs in mobs
-                                    from fBigBoys in
-                                        new[]
-                                            {
-                                                "SRU_Blue", "SRU_Gromp", "SRU_Murkwolf", "SRU_Razorbeak", "SRU_Red",
-                                                "SRU_Krug", "SRU_Dragon", "SRU_Baron", "Sru_Crab"
-                                            }
-                                    where fBigBoys == fMobs.SkinName
-                                    select fMobs).FirstOrDefault();
+                    from fBigBoys in
+                        new[]
+                        {
+                            "SRU_Blue", "SRU_Gromp", "SRU_Murkwolf", "SRU_Razorbeak", "SRU_Red",
+                            "SRU_Krug", "SRU_Dragon", "SRU_Baron", "Sru_Crab"
+                        }
+                    where fBigBoys == fMobs.SkinName
+                    select fMobs).FirstOrDefault();
 
                 if (oMob != null)
                 {
@@ -209,13 +240,14 @@ namespace Marksman.Utils
             //Notifications.AddNotification("Marksman: " + message, 4000);
         }
 
-        public static void DrawText(Font vFont, string vText, float vPosX, float vPosY, ColorBGRA vColor, bool shadow = false)
+        public static void DrawText(Font vFont, string vText, float vPosX, float vPosY, ColorBGRA vColor,
+            bool shadow = false)
         {
             if (shadow)
             {
                 vFont.DrawText(null, vText, (int) vPosX + 2, (int) vPosY + 2, SharpDX.Color.Black);
             }
-            vFont.DrawText(null, vText, (int)vPosX, (int)vPosY, vColor);
+            vFont.DrawText(null, vText, (int) vPosX, (int) vPosY, vColor);
         }
 
 
@@ -224,41 +256,41 @@ namespace Marksman.Utils
             var a = new Geometry.Polygon.Line(from, to);
             a.Draw(color, 3);
 
-            Vector3[] x = new[] { from, to };
-            var aX = Drawing.WorldToScreen( new Vector3(CenterOfVectors(x).X, CenterOfVectors(x).Y, CenterOfVectors(x).Z));
+            Vector3[] x = new[] {from, to};
+            var aX = Drawing.WorldToScreen(new Vector3(CenterOfVectors(x).X, CenterOfVectors(x).Y, CenterOfVectors(x).Z));
             Drawing.DrawText(aX.X - 15, aX.Y - 15, System.Drawing.Color.White, text);
         }
 
         public static int GetEnemyPriority(string championName)
         {
             string[] lowPriority =
-                {
-                    "Alistar", "Amumu", "Bard", "Blitzcrank", "Braum", "Cho'Gath", "Dr. Mundo", "Garen",
-                    "Gnar", "Hecarim", "Janna", "Jarvan IV", "Leona", "Lulu", "Malphite", "Nami",
-                    "Nasus", "Nautilus", "Nunu", "Olaf", "Rammus", "Renekton", "Sejuani", "Shen",
-                    "Shyvana", "Singed", "Sion", "Skarner", "Sona", "Soraka", "Tahm", "Taric", "Thresh",
-                    "Volibear", "Warwick", "MonkeyKing", "Yorick", "Zac", "Zyra"
-                };
+            {
+                "Alistar", "Amumu", "Bard", "Blitzcrank", "Braum", "Cho'Gath", "Dr. Mundo", "Garen",
+                "Gnar", "Hecarim", "Janna", "Jarvan IV", "Leona", "Lulu", "Malphite", "Nami",
+                "Nasus", "Nautilus", "Nunu", "Olaf", "Rammus", "Renekton", "Sejuani", "Shen",
+                "Shyvana", "Singed", "Sion", "Skarner", "Sona", "Soraka", "Tahm", "Taric", "Thresh",
+                "Volibear", "Warwick", "MonkeyKing", "Yorick", "Zac", "Zyra"
+            };
 
             string[] mediumPriority =
-                {
-                    "Aatrox", "Akali", "Darius", "Diana", "Ekko", "Elise", "Evelynn", "Fiddlesticks",
-                    "Fiora", "Fizz", "Galio", "Gangplank", "Gragas", "Heimerdinger", "Irelia", "Jax",
-                    "Jayce", "Kassadin", "Kayle", "Kha'Zix", "Lee Sin", "Lissandra", "Maokai",
-                    "Mordekaiser", "Morgana", "Nocturne", "Nidalee", "Pantheon", "Poppy", "RekSai",
-                    "Rengar", "Riven", "Rumble", "Ryze", "Shaco", "Swain", "Trundle", "Tryndamere",
-                    "Udyr", "Urgot", "Vladimir", "Vi", "XinZhao", "Yasuo", "Zilean"
-                };
+            {
+                "Aatrox", "Akali", "Darius", "Diana", "Ekko", "Elise", "Evelynn", "Fiddlesticks",
+                "Fiora", "Fizz", "Galio", "Gangplank", "Gragas", "Heimerdinger", "Vi", "Jax",
+                "Jayce", "Kassadin", "Kayle", "Kha'Zix", "Lee Sin", "Lissandra", "Maokai",
+                "Mordekaiser", "Morgana", "Nocturne", "Nidalee", "Pantheon", "Poppy", "RekSai",
+                "Rengar", "Riven", "Rumble", "Ryze", "Shaco", "Swain", "Trundle", "Tryndamere",
+                "Udyr", "Urgot", "Vladimir", "Vi", "XinZhao", "Yasuo", "Zilean"
+            };
 
             string[] highPriority =
-                {
-                    "Ahri", "Anivia", "Annie", "Ashe", "Azir", "Brand", "Caitlyn", "Cassiopeia",
-                    "Corki", "Draven", "Ezreal", "Graves", "Jinx", "Kalista", "Karma", "Karthus",
-                    "Katarina", "Kennen", "Kindred", "KogMaw", "Leblanc", "Lucian", "Lux", "Malzahar",
-                    "MasterYi", "MissFortune", "Orianna", "Quinn", "Sivir", "Syndra", "Talon", "Teemo",
-                    "Tristana", "TwistedFate", "Twitch", "Varus", "Vayne", "Veigar", "VelKoz",
-                    "Viktor", "Xerath", "Zed", "Ziggs"
-                };
+            {
+                "Ahri", "Anivia", "Annie", "Ashe", "Azir", "Brand", "Caitlyn", "Cassiopeia",
+                "Corki", "Draven", "Ezreal", "Graves", "Jinx", "Kalista", "Karma", "Karthus",
+                "Katarina", "Kennen", "Kindred", "KogMaw", "Leblanc", "Lucian", "Lux", "Malzahar",
+                "MasterYi", "MissFortune", "Orianna", "Quinn", "Sivir", "Syndra", "Talon", "Teemo",
+                "Tristana", "TwistedFate", "Twitch", "Varus", "Vayne", "Veigar", "VelKoz",
+                "Viktor", "Xerath", "Zed", "Ziggs"
+            };
 
             if (lowPriority.Contains(championName))
             {
@@ -274,7 +306,7 @@ namespace Marksman.Utils
             }
             return 1;
         }
-        
+
         public static Vector3 CenterOfVectors(Vector3[] vectors)
         {
             var sum = Vector3.Zero;
@@ -282,7 +314,7 @@ namespace Marksman.Utils
                 return sum;
 
             sum = vectors.Aggregate(sum, (current, vec) => current + vec);
-            return sum / vectors.Length;
+            return sum/vectors.Length;
         }
     }
 
@@ -296,7 +328,7 @@ namespace Marksman.Utils
         public static bool CanUseSpell(this Obj_AI_Hero unit)
         {
             return unit != null && (unit.HasBuff("kindredrnodeathbuff") && unit.HealthPercent <= 10);
-            
+
         }
 
         public static bool IsKillableTarget(this Obj_AI_Hero target, SpellSlot spell)
@@ -310,7 +342,7 @@ namespace Marksman.Utils
             if (target.ChampionName == "Blitzcrank" && !target.HasBuff("BlitzcrankManaBarrierCD")
                 && !target.HasBuff("ManaBarrier"))
             {
-                totalHealth += target.Mana / 2;
+                totalHealth += target.Mana/2;
             }
             return (ObjectManager.Player.GetSpellDamage(target, spell) >= totalHealth);
         }
@@ -358,16 +390,19 @@ namespace Marksman.Utils
             return target.IsInvulnerable;
         }
     }
+
     public enum FarmMode
     {
         LaneClear,
         JungleClear
     }
+
     public enum MinionType
     {
         All,
         BigMobs
     }
+
     public enum MinionGroup
     {
         Alone,
@@ -380,7 +415,7 @@ namespace Marksman.Utils
         MinionGroup,
         Position
     }
-    
+
     public interface IValue<T>
     {
         T GetValue(Spell spell, FarmMode farmMode, GameObjectTeam minionTeam, MinionType minionType = MinionType.All);
@@ -388,7 +423,8 @@ namespace Marksman.Utils
 
     public class SomeClass : IValue<Vector2>, IValue<IEnumerable<Obj_AI_Base>>
     {
-        IEnumerable<Obj_AI_Base> IValue<IEnumerable<Obj_AI_Base>>.GetValue(Spell spell, FarmMode farmMode, GameObjectTeam minionTeam, MinionType minionType)
+        IEnumerable<Obj_AI_Base> IValue<IEnumerable<Obj_AI_Base>>.GetValue(Spell spell, FarmMode farmMode,
+            GameObjectTeam minionTeam, MinionType minionType)
         {
             IEnumerable<Obj_AI_Base> list = ObjectManager.Get<Obj_AI_Minion>().Where(m => m.IsValidTarget(spell.Range));
             IEnumerable<Obj_AI_Base> mobs;
@@ -418,7 +454,8 @@ namespace Marksman.Utils
             return mobs;
         }
 
-        Vector2 IValue<Vector2>.GetValue(Spell spell, FarmMode farmMode, GameObjectTeam minionTeam, MinionType minionType)
+        Vector2 IValue<Vector2>.GetValue(Spell spell, FarmMode farmMode, GameObjectTeam minionTeam,
+            MinionType minionType)
         {
             return new Vector2(0, 0);
         }
@@ -429,28 +466,31 @@ namespace Marksman.Utils
     {
         public static Vector2 GetMobPosition => new Vector2(0, 0);
 
-        public static int GetMinionCountsInRange(this Spell spell) => MinionManager.GetMinions(ObjectManager.Player.Position, spell.Range).Count;
+        public static int GetMinionCountsInRange(this Spell spell)
+            => MinionManager.GetMinions(ObjectManager.Player.Position, spell.Range).Count;
 
         public static bool GetMinionTotalAaCont(this Spell spell, int minionCount = 1)
         {
-            var totalAa = ObjectManager.Get<Obj_AI_Minion>().Where(m => m.IsValidTarget(spell.Range)).Sum(mob => (int)mob.Health);
+            var totalAa =
+                ObjectManager.Get<Obj_AI_Minion>().Where(m => m.IsValidTarget(spell.Range)).Sum(mob => (int) mob.Health);
 
-            totalAa = (int)(totalAa / ObjectManager.Player.TotalAttackDamage);
+            totalAa = (int) (totalAa/ObjectManager.Player.TotalAttackDamage);
             return totalAa >= minionCount;
         }
 
         public static bool GetMinionTotalAaCont(float range, int minionCount = 1)
         {
-            var totalAa = ObjectManager.Get<Obj_AI_Minion>().Where(m => m.IsValidTarget(range)).Sum(mob => (int)mob.Health);
+            var totalAa =
+                ObjectManager.Get<Obj_AI_Minion>().Where(m => m.IsValidTarget(range)).Sum(mob => (int) mob.Health);
 
-            totalAa = (int)(totalAa / ObjectManager.Player.TotalAttackDamage);
+            totalAa = (int) (totalAa/ObjectManager.Player.TotalAttackDamage);
             return totalAa >= minionCount;
         }
 
         public static Vector2 GetCircularFarmMinions(this Spell spell, int minionCount = 1)
         {
             List<Obj_AI_Base> minions = MinionManager.GetMinions(ObjectManager.Player.Position, spell.Range);
-            MinionManager.FarmLocation location = spell.GetCircularFarmLocation(minions, spell.Width * 0.75f);
+            MinionManager.FarmLocation location = spell.GetCircularFarmLocation(minions, spell.Width*0.75f);
             if (location.MinionsHit >= minionCount && spell.IsInRange(location.Position.To3D()))
             {
                 return location.Position;
@@ -459,14 +499,21 @@ namespace Marksman.Utils
             return new Vector2(0, 0);
         }
 
-        private static List<Obj_AI_Base> GetCollisionMinions(this Spell spell, Obj_AI_Hero source, Vector3 targetposition)
+        private static List<Obj_AI_Base> GetCollisionMinions(this Spell spell, Obj_AI_Hero source,
+            Vector3 targetposition)
         {
-            var input = new PredictionInput { Unit = source, Radius = spell.Width, Delay = spell.Delay, Speed = spell.Speed, };
+            var input = new PredictionInput
+            {
+                Unit = source,
+                Radius = spell.Width,
+                Delay = spell.Delay,
+                Speed = spell.Speed,
+            };
 
             input.CollisionObjects[0] = CollisionableObjects.Minions;
 
             return
-                Collision.GetCollision(new List<Vector3> { targetposition }, input)
+                Collision.GetCollision(new List<Vector3> {targetposition}, input)
                     .OrderBy(obj => obj.Distance(source, false))
                     .ToList();
         }
@@ -479,7 +526,8 @@ namespace Marksman.Utils
                 int killableMinionCount = 0;
                 foreach (
                     Obj_AI_Base colminion in
-                        spell.GetCollisionMinions(ObjectManager.Player, ObjectManager.Player.ServerPosition.Extend(minion.ServerPosition, spell.Range)))
+                        spell.GetCollisionMinions(ObjectManager.Player,
+                            ObjectManager.Player.ServerPosition.Extend(minion.ServerPosition, spell.Range)))
                 {
                     if (colminion.Health <= spell.GetDamage(colminion))
                     {
@@ -516,20 +564,22 @@ namespace Marksman.Utils
             MinionGroup minionGroup = MinionGroup.Alone,
             int minionCount = 1)
         {
-            IEnumerable<Obj_AI_Base> list = ObjectManager.Get<Obj_AI_Minion>().Where(m => m.IsValidTarget(spell.Range) && m.Team == GameObjectTeam.Neutral);
+            IEnumerable<Obj_AI_Base> list =
+                ObjectManager.Get<Obj_AI_Minion>()
+                    .Where(m => m.IsValidTarget(spell.Range) && m.Team == GameObjectTeam.Neutral);
 
             if (minionType == MinionType.BigMobs)
             {
 
                 IEnumerable<Obj_AI_Base> oMob = (from fMobs in list
-                                                 from fBigBoys in
-                                                     new[]
-                                                     {
+                    from fBigBoys in
+                        new[]
+                        {
                             "SRU_Blue", "SRU_Gromp", "SRU_Murkwolf", "SRU_Razorbeak", "SRU_Red",
                             "SRU_Krug", "SRU_Dragon", "SRU_Baron", "Sru_Crab"
-                                                     }
-                                                 where fBigBoys == fMobs.SkinName
-                                                 select fMobs).AsEnumerable();
+                        }
+                    where fBigBoys == fMobs.SkinName
+                    select fMobs).AsEnumerable();
                 list = oMob;
             }
             return list;
@@ -545,11 +595,13 @@ namespace Marksman.Utils
             LaneClear,
             JungleClear
         }
+
         public enum MinionType
         {
             All,
             BigMobs
         }
+
         public enum MinionGroup
         {
             Alone,
@@ -563,7 +615,8 @@ namespace Marksman.Utils
             Position
         }
 
-        public static IEnumerable<Obj_AI_Base> GetMins(this Spell spell, FarmMode farmMode, GameObjectTeam minionTeam, MinionType minionType = MinionType.All, MinionGroup minionGroup = MinionGroup.Alone, int minionCount = 1)
+        public static IEnumerable<Obj_AI_Base> GetMins(this Spell spell, FarmMode farmMode, GameObjectTeam minionTeam,
+            MinionType minionType = MinionType.All, MinionGroup minionGroup = MinionGroup.Alone, int minionCount = 1)
         {
             IEnumerable<Obj_AI_Base> list = ObjectManager.Get<Obj_AI_Minion>().Where(m => m.IsValidTarget(spell.Range));
             IEnumerable<Obj_AI_Base> mobs;
@@ -595,19 +648,19 @@ namespace Marksman.Utils
             var objAiBases = mobs as IList<Obj_AI_Base> ?? mobs.ToList();
             List<Obj_AI_Base> m1 = objAiBases.ToList();
 
-                var locLine = spell.GetLineFarmLocation(m1);
-                if (locLine.MinionsHit >= 3 && spell.IsInRange(locLine.Position.To3D()))
-                {
-                    spell.Cast(locLine.Position);
+            var locLine = spell.GetLineFarmLocation(m1);
+            if (locLine.MinionsHit >= 3 && spell.IsInRange(locLine.Position.To3D()))
+            {
+                spell.Cast(locLine.Position);
 
-                }
+            }
 
-                var locCircular = spell.GetCircularFarmLocation(m1, spell.Width);
-                if (locCircular.MinionsHit >= minionCount && spell.IsInRange(locCircular.Position.To3D()))
-                {
-                    spell.Cast(locCircular.Position);
-                }
-            
+            var locCircular = spell.GetCircularFarmLocation(m1, spell.Width);
+            if (locCircular.MinionsHit >= minionCount && spell.IsInRange(locCircular.Position.To3D()))
+            {
+                spell.Cast(locCircular.Position);
+            }
+
             return null;
         }
 
@@ -635,19 +688,19 @@ namespace Marksman.Utils
                 && ObjectManager.Player.Spellbook.CanUseSpell(ObjectManager.Player.GetSpellSlot("summonerdot"))
                 == SpellState.Ready && ObjectManager.Player.Distance(t) < 550)
             {
-                fComboDamage += (float)ObjectManager.Player.GetSummonerSpellDamage(t, Damage.SummonerSpell.Ignite);
+                fComboDamage += (float) ObjectManager.Player.GetSummonerSpellDamage(t, Damage.SummonerSpell.Ignite);
             }
 
             if (Items.CanUseItem(3144) && ObjectManager.Player.Distance(t) < 550)
             {
-                fComboDamage += (float)ObjectManager.Player.GetItemDamage(t, Damage.DamageItems.Bilgewater);
+                fComboDamage += (float) ObjectManager.Player.GetItemDamage(t, Damage.DamageItems.Bilgewater);
             }
 
             if (Items.CanUseItem(3153) && ObjectManager.Player.Distance(t) < 550)
             {
-                fComboDamage += (float)ObjectManager.Player.GetItemDamage(t, Damage.DamageItems.Botrk);
+                fComboDamage += (float) ObjectManager.Player.GetItemDamage(t, Damage.DamageItems.Botrk);
             }
-            return (float)fComboDamage;
+            return (float) fComboDamage;
         }
 
         public static bool IsUnderAllyTurret(this Obj_AI_Base unit)
@@ -675,17 +728,18 @@ namespace Marksman.Utils
         }
 
         public static bool IsPositionSafe(this Spell spell, Vector2 position)
-        // use underTurret and .Extend for this please
+            // use underTurret and .Extend for this please
         {
             var myPos = ObjectManager.Player.Position.To2D();
             var newPos = (position - myPos);
             newPos.Normalize();
 
-            var checkPos = position + newPos * (spell.Range - Vector2.Distance(position, myPos));
+            var checkPos = position + newPos*(spell.Range - Vector2.Distance(position, myPos));
             var enemy = HeroManager.Enemies.Find(e => e.Distance(checkPos) < 350);
             return enemy == null;
         }
     }
+
     public static class Jungle
     {
         public enum GameObjectTeam
@@ -695,6 +749,7 @@ namespace Marksman.Utils
             Chaos = 200,
             Neutral = 300,
         }
+
         public enum DrawOption
         {
             Off = 0,
@@ -771,7 +826,7 @@ namespace Marksman.Utils
         public static GameObjectTeam Team(this Obj_AI_Base mob)
         {
             mobTeams = new Dictionary<Vector2, GameObjectTeam>();
-            if (Game.MapId == (GameMapId)11)
+            if (Game.MapId == (GameMapId) 11)
             {
                 mobTeams.Add(new Vector2(7756f, 4118f), GameObjectTeam.Order); // blue team :red;
                 mobTeams.Add(new Vector2(3824f, 7906f), GameObjectTeam.Order); // blue team :blue
