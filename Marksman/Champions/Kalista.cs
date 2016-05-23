@@ -58,10 +58,7 @@ namespace Marksman.Champions
 
         public static float IncomingDamage
         {
-            get
-            {
-                return incomingDamage.Sum(e => e.Value) + InstantDamage.Sum(e => e.Value);
-            }
+            get { return incomingDamage.Sum(e => e.Value) + InstantDamage.Sum(e => e.Value); }
         }
 
         public Kalista()
@@ -78,23 +75,47 @@ namespace Marksman.Champions
             font = new Font(
                 Drawing.Direct3DDevice,
                 new FontDescription
-                    {
-                        FaceName = "Segoe UI", Height = 45, OutputPrecision = FontPrecision.Default,
-                        Quality = FontQuality.Default
-                    });
+                {
+                    FaceName = "Segoe UI",
+                    Height = 45,
+                    OutputPrecision = FontPrecision.Default,
+                    Quality = FontQuality.Default
+                });
+
+
+            Drawing.OnPreReset += DrawingOnOnPreReset;
+            Drawing.OnPostReset += DrawingOnOnPostReset;
+            AppDomain.CurrentDomain.DomainUnload += CurrentDomainOnDomainUnload;
+            AppDomain.CurrentDomain.ProcessExit += CurrentDomainOnDomainUnload;
 
             Utils.Utils.PrintMessage("Kalista loaded.");
         }
+
+        private void CurrentDomainOnDomainUnload(object sender, EventArgs eventArgs)
+        {
+            font.Dispose();
+        }
+
+        private void DrawingOnOnPostReset(EventArgs args)
+        {
+            font.OnResetDevice();
+        }
+
+        private void DrawingOnOnPreReset(EventArgs args)
+        {
+            font.OnLostDevice();
+        }
+
 
         public static int KalistaMarkerCount
         {
             get
             {
                 return (from enemy in ObjectManager.Get<Obj_AI_Hero>().Where(tx => tx.IsEnemy && !tx.IsDead)
-                        where ObjectManager.Player.Distance(enemy) < E.Range
-                        from buff in enemy.Buffs
-                        where buff.Name.Contains("kalistaexpungemarker")
-                        select buff).Select(buff => buff.Count).FirstOrDefault();
+                    where ObjectManager.Player.Distance(enemy) < E.Range
+                    from buff in enemy.Buffs
+                    where buff.Name.Contains("kalistaexpungemarker")
+                    select buff).Select(buff => buff.Count).FirstOrDefault();
             }
         }
 
@@ -126,10 +147,11 @@ namespace Marksman.Champions
                 MinionManager.GetMinions(ObjectManager.Player.ServerPosition, E.Range)
                     .Where(x => E.CanCast(x) && x.Health < E.GetDamage(x)))
             {
-                if (m.SkinName.ToLower() == "sru_chaosminionsiege" || m.SkinName.ToLower() == "sru_chaosminionsuper") killableMinionCount += 2;
+                if (m.SkinName.ToLower() == "sru_chaosminionsiege" || m.SkinName.ToLower() == "sru_chaosminionsuper")
+                    killableMinionCount += 2;
                 else killableMinionCount++;
 
-                Render.Circle.DrawCircle(m.Position, (float)(m.BoundingRadius * 1.5), Color.White, 5);
+                Render.Circle.DrawCircle(m.Position, (float) (m.BoundingRadius*1.5), Color.White, 5);
             }
 
             foreach (var m in
@@ -139,11 +161,12 @@ namespace Marksman.Champions
                     MinionTypes.All,
                     MinionTeam.Neutral).Where(m => E.CanCast(m) && m.Health < E.GetDamage(m)))
             {
-                if (m.SkinName.ToLower().Contains("baron") || m.SkinName.ToLower().Contains("dragon") && E.CanCast(m)) E.Cast(m);
-                else Render.Circle.DrawCircle(m.Position, (float)(m.BoundingRadius * 1.5), Color.White, 5);
+                if (m.SkinName.ToLower().Contains("baron") || m.SkinName.ToLower().Contains("dragon") && E.CanCast(m))
+                    E.Cast(m);
+                else Render.Circle.DrawCircle(m.Position, (float) (m.BoundingRadius*1.5), Color.White, 5);
             }
 
-            Spell[] spellList = { Q, E, R };
+            Spell[] spellList = {Q, E, R};
             foreach (var spell in spellList)
             {
                 var menuItem = GetValue<Circle>("Draw" + spell.Slot);
@@ -165,9 +188,11 @@ namespace Marksman.Champions
                     {
                         xEnemyMarker.Add(
                             new EnemyMarker
-                                {
-                                    ChampionName = xEnemy.ChampionName, ExpireTime = Game.Time + 4, BuffCount = buff.Count
-                                });
+                            {
+                                ChampionName = xEnemy.ChampionName,
+                                ExpireTime = Game.Time + 4,
+                                BuffCount = buff.Count
+                            });
                     }
                 }
 
@@ -187,8 +212,8 @@ namespace Marksman.Champions
                             Utils.Utils.DrawText(
                                 font,
                                 display,
-                                (int)enemy.HPBarPosition.X - 10,
-                                (int)enemy.HPBarPosition.Y,
+                                (int) enemy.HPBarPosition.X - 10,
+                                (int) enemy.HPBarPosition.Y,
                                 SharpDX.Color.Wheat);
                             //Drawing.DrawText(enemy.HPBarPosition.X + 145, enemy.HPBarPosition.Y + 20, drawEStackCount.Color, display);
                         }
@@ -220,28 +245,28 @@ namespace Marksman.Champions
             if (!Q.IsReady())
             {
                 Drawing.DrawText(
-                    Drawing.Width * 0.44f,
-                    Drawing.Height * 0.80f,
+                    Drawing.Width*0.44f,
+                    Drawing.Height*0.80f,
                     Color.Red,
                     "Q is not ready! You can not Jump!");
                 return;
             }
 
             Drawing.DrawText(
-                Drawing.Width * 0.39f,
-                Drawing.Height * 0.80f,
+                Drawing.Width*0.39f,
+                Drawing.Height*0.80f,
                 Color.White,
                 "Jumping Mode is Active! Go to the nearest jump point!");
 
             foreach (var xTo in from pos in JumpPos
-                                where
-                                    ObjectManager.Player.Distance(pos.Key) <= 35f
-                                    || ObjectManager.Player.Distance(pos.Value) <= 35f
-                                let xTo = pos.Value
-                                select
-                                    ObjectManager.Player.Distance(pos.Key) < ObjectManager.Player.Distance(pos.Value)
-                                        ? pos.Value
-                                        : pos.Key)
+                where
+                    ObjectManager.Player.Distance(pos.Key) <= 35f
+                    || ObjectManager.Player.Distance(pos.Value) <= 35f
+                let xTo = pos.Value
+                select
+                    ObjectManager.Player.Distance(pos.Key) < ObjectManager.Player.Distance(pos.Value)
+                        ? pos.Value
+                        : pos.Key)
             {
                 Q.Cast(new Vector2(xTo.X, xTo.Y), true);
                 //Packet.C2S.Move.Encoded(new Packet.C2S.Move.Struct(xTo.X, xTo.Y)).Send();
@@ -327,10 +352,10 @@ namespace Marksman.Champions
                 var enemy =
                     HeroManager.Enemies.Find(
                         e =>
-                        e.Buffs.Any(
-                            b =>
-                            b.Name.ToLower() == kalistaEBuffName && e.IsValidTarget(E.Range)
-                            && e.Health < E.GetDamage(e)));
+                            e.Buffs.Any(
+                                b =>
+                                    b.Name.ToLower() == kalistaEBuffName && e.IsValidTarget(E.Range)
+                                    && e.Health < E.GetDamage(e)));
                 if (enemy == null && minion == null)
                 {
                     args.Process = false;
@@ -355,15 +380,15 @@ namespace Marksman.Champions
                     {
 
                         incomingDamage.Add(
-                            SoulBound.ServerPosition.Distance(sender.ServerPosition) / args.SData.MissileSpeed
+                            SoulBound.ServerPosition.Distance(sender.ServerPosition)/args.SData.MissileSpeed
                             + Game.Time,
-                            (float)sender.GetAutoAttackDamage(SoulBound));
+                            (float) sender.GetAutoAttackDamage(SoulBound));
                     }
 
 
                     else if (sender is Obj_AI_Hero)
                     {
-                        var attacker = (Obj_AI_Hero)sender;
+                        var attacker = (Obj_AI_Hero) sender;
                         var slot = attacker.GetSpellSlot(args.SData.Name);
 
                         if (slot != SpellSlot.Unknown)
@@ -374,7 +399,7 @@ namespace Marksman.Champions
 
                                 InstantDamage.Add(
                                     Game.Time + 2,
-                                    (float)attacker.GetSummonerSpellDamage(SoulBound, Damage.SummonerSpell.Ignite));
+                                    (float) attacker.GetSummonerSpellDamage(SoulBound, Damage.SummonerSpell.Ignite));
                             }
                             else if (slot.HasFlag(SpellSlot.Q | SpellSlot.W | SpellSlot.E | SpellSlot.R)
                                      && ((args.Target != null && args.Target.NetworkId == SoulBound.NetworkId)
@@ -382,7 +407,7 @@ namespace Marksman.Champions
                                          < Math.Pow(args.SData.LineWidth, 2)))
                             {
 
-                                InstantDamage.Add(Game.Time + 2, (float)attacker.GetSpellDamage(SoulBound, slot));
+                                InstantDamage.Add(Game.Time + 2, (float) attacker.GetSpellDamage(SoulBound, slot));
                             }
                         }
                     }
@@ -460,9 +485,9 @@ namespace Marksman.Champions
             Utility.HpBarDamageIndicator.DamageToUnit = GetEDamage;
             Utility.HpBarDamageIndicator.Enabled = damageAfterE.GetValue<bool>();
             damageAfterE.ValueChanged += delegate(object sender, OnValueChangeEventArgs eventArgs)
-                {
-                    Utility.HpBarDamageIndicator.Enabled = eventArgs.GetNewValue<bool>();
-                };
+            {
+                Utility.HpBarDamageIndicator.Enabled = eventArgs.GetNewValue<bool>();
+            };
 
             return true;
         }
@@ -481,7 +506,7 @@ namespace Marksman.Champions
             config.AddItem(new MenuItem("UseQ.Lane" + Id, "Use Q:").SetValue(new StringList(srtQ, 0)));
             config.AddItem(
                 new MenuItem("UseQ.Mode.Lane" + Id, "Use Q Mode:").SetValue(
-                    new StringList(new[] { "Everytime", "Just Out of AA Range" }, 1)));
+                    new StringList(new[] {"Everytime", "Just Out of AA Range"}, 1)));
 
             string[] strW = new string[6];
             strW[0] = "Off";
@@ -495,7 +520,7 @@ namespace Marksman.Champions
             config.AddItem(new MenuItem("UseE.LaneNon" + Id, "Use E for Non Killable Minions:").SetValue(true));
             config.AddItem(
                 new MenuItem("UseE.Prepare.Lane" + Id, "Prepare Minions for E Farm").SetValue(
-                    new StringList(new[] { "Off", "On", "Just Under Ally Turret" }, 2)));
+                    new StringList(new[] {"Off", "On", "Just Under Ally Turret"}, 2)));
 
 
             return true;
@@ -505,21 +530,21 @@ namespace Marksman.Champions
         {
             config.AddItem(
                 new MenuItem("UseQJ" + Id, "Use Q").SetValue(
-                    new StringList(new[] { "Off", "On", "Just big Monsters" }, 1)));
+                    new StringList(new[] {"Off", "On", "Just big Monsters"}, 1)));
             config.AddItem(
                 new MenuItem("UseEJ" + Id, "Use E").SetValue(
-                    new StringList(new[] { "Off", "On", "Just big Monsters" }, 1)));
+                    new StringList(new[] {"Off", "On", "Just big Monsters"}, 1)));
             return true;
         }
 
         private static List<Obj_AI_Base> qGetCollisionMinions(Obj_AI_Hero source, Vector3 targetposition)
         {
-            var input = new PredictionInput { Unit = source, Radius = Q.Width, Delay = Q.Delay, Speed = Q.Speed, };
+            var input = new PredictionInput {Unit = source, Radius = Q.Width, Delay = Q.Delay, Speed = Q.Speed,};
 
             input.CollisionObjects[0] = CollisionableObjects.Minions;
 
             return
-                Collision.GetCollision(new List<Vector3> { targetposition }, input)
+                Collision.GetCollision(new List<Vector3> {targetposition}, input)
                     .OrderBy(obj => obj.Distance(source, false))
                     .ToList();
         }
@@ -549,7 +574,8 @@ namespace Marksman.Champions
                         ? Utils.Utils.MobTypes.All
                         : Utils.Utils.MobTypes.BigBoys);
 
-                if (jungleMobs != null && E.CanCast(jungleMobs) && jungleMobs.Health < E.GetDamage(jungleMobs)) E.CastOnUnit(jungleMobs);
+                if (jungleMobs != null && E.CanCast(jungleMobs) && jungleMobs.Health < E.GetDamage(jungleMobs))
+                    E.CastOnUnit(jungleMobs);
             }
         }
 
@@ -562,10 +588,10 @@ namespace Marksman.Champions
                 IEnumerable<Obj_AI_Minion> minions =
                     from m in
                         ObjectManager.Get<Obj_AI_Minion>()
-                        .Where(
-                            m =>
-                            m.Health > ObjectManager.Player.TotalAttackDamage
-                            && m.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + 65))
+                            .Where(
+                                m =>
+                                    m.Health > ObjectManager.Player.TotalAttackDamage
+                                    && m.IsValidTarget(Orbwalking.GetRealAutoAttackRange(null) + 65))
                     select m;
                 if (prepareMinions == 2)
                 {
@@ -668,7 +694,7 @@ namespace Marksman.Champions
                     }
 
                     if (killableMinionCount >= minECount && E.IsReady()
-                        && ObjectManager.Player.ManaPercent > E.ManaCost * 2)
+                        && ObjectManager.Player.ManaPercent > E.ManaCost*2)
                     {
                         E.Cast();
                     }
@@ -678,27 +704,39 @@ namespace Marksman.Champions
             // Don't miss minion
             if (GetValue<bool>("UseE.LaneNon"))
             {
-                var minions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, E.Range * 1);
+                var minions = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, E.Range*1);
 
                 foreach (var n in minions)
                 {
-                    var xH = HealthPrediction.GetHealthPrediction(n, (int)(ObjectManager.Player.AttackCastDelay * 1000), Game.Ping / 2 + 100);
+                    var xH = HealthPrediction.GetHealthPrediction(n, (int) (ObjectManager.Player.AttackCastDelay*1000),
+                        Game.Ping/2 + 100);
                     if (xH < 0)
                     {
                         if (n.Health < E.GetDamage(n) && E.CanCast(n))
                         {
                             E.Cast(n);
                         }
-                        else if (Q.IsReady() && Q.CanCast(n) && n.Distance(ObjectManager.Player.Position) < Orbwalking.GetRealAutoAttackRange(null) + 75)
+                        else if (Q.IsReady() && Q.CanCast(n) &&
+                                 n.Distance(ObjectManager.Player.Position) < Orbwalking.GetRealAutoAttackRange(null) + 75)
                         {
-                            xH = HealthPrediction.GetHealthPrediction( n, (int)(ObjectManager.Player.AttackCastDelay * 1000), (int)Q.Speed);
+                            xH = HealthPrediction.GetHealthPrediction(n,
+                                (int) (ObjectManager.Player.AttackCastDelay*1000), (int) Q.Speed);
                             if (xH < 0)
                             {
-                                var input = new PredictionInput{ Unit = ObjectManager.Player, Radius = Q.Width, Delay = Q.Delay, Speed = Q.Speed, };
+                                var input = new PredictionInput
+                                {
+                                    Unit = ObjectManager.Player,
+                                    Radius = Q.Width,
+                                    Delay = Q.Delay,
+                                    Speed = Q.Speed,
+                                };
 
                                 input.CollisionObjects[0] = CollisionableObjects.Minions;
 
-                                int count = Collision.GetCollision(new List<Vector3> { n.Position }, input).OrderBy(obj => obj.Distance(ObjectManager.Player)).Count(obj => obj.NetworkId != n.NetworkId);
+                                int count =
+                                    Collision.GetCollision(new List<Vector3> {n.Position}, input)
+                                        .OrderBy(obj => obj.Distance(ObjectManager.Player))
+                                        .Count(obj => obj.NetworkId != n.NetworkId);
                                 if (count == 0)
                                 {
                                     Q.Cast(n);
@@ -763,13 +801,13 @@ namespace Marksman.Champions
     public static class Damages
     {
 
-        private static readonly float[] RawRendDamage = { 20, 30, 40, 50, 60 };
+        private static readonly float[] RawRendDamage = {20, 30, 40, 50, 60};
 
-        private static readonly float[] RawRendDamageMultiplier = { 0.6f, 0.6f, 0.6f, 0.6f, 0.6f };
+        private static readonly float[] RawRendDamageMultiplier = {0.6f, 0.6f, 0.6f, 0.6f, 0.6f};
 
-        private static readonly float[] RawRendDamagePerSpear = { 10, 14, 19, 25, 32 };
+        private static readonly float[] RawRendDamagePerSpear = {10, 14, 19, 25, 32};
 
-        private static readonly float[] RawRendDamagePerSpearMultiplier = { 0.2f, 0.225f, 0.25f, 0.275f, 0.3f };
+        private static readonly float[] RawRendDamagePerSpearMultiplier = {0.2f, 0.225f, 0.25f, 0.275f, 0.3f};
 
         static Damages()
         {
@@ -799,7 +837,7 @@ namespace Marksman.Champions
                 if (hero.ChampionName == "Blitzcrank" && !target.HasBuff("BlitzcrankManaBarrierCD")
                     && !target.HasBuff("ManaBarrier"))
                 {
-                    totalHealth += target.Mana / 2;
+                    totalHealth += target.Mana/2;
                 }
             }
 
@@ -815,11 +853,11 @@ namespace Marksman.Champions
         {
             return
                 (float)
-                (ObjectManager.Player.CalcDamage(
-                    target,
-                    Damage.DamageType.Magical,
-                    GetRawRendDamage(target, customStacks))
-                 * (ObjectManager.Player.HasBuff("SummonerExhaustSlow") ? 0.6f : 1));
+                    (ObjectManager.Player.CalcDamage(
+                        target,
+                        Damage.DamageType.Magical,
+                        GetRawRendDamage(target, customStacks))
+                     *(ObjectManager.Player.HasBuff("SummonerExhaustSlow") ? 0.6f : 1));
         }
 
         public static float GetRawRendDamage(Obj_AI_Base target, int customStacks = -1)
@@ -828,9 +866,9 @@ namespace Marksman.Champions
             if (stacks > -1)
             {
                 var index = Kalista.E.Level - 1;
-                return RawRendDamage[index] + stacks * RawRendDamagePerSpear[index]
+                return RawRendDamage[index] + stacks*RawRendDamagePerSpear[index]
                        + ObjectManager.Player.TotalAttackDamage
-                       * (RawRendDamageMultiplier[index] + stacks * RawRendDamagePerSpearMultiplier[index]);
+                       *(RawRendDamageMultiplier[index] + stacks*RawRendDamagePerSpearMultiplier[index]);
             }
 
             return 0;
@@ -845,6 +883,5 @@ namespace Marksman.Champions
         {
             return target.Buffs.Find(b => b.Caster.IsMe && b.IsValid && b.DisplayName == "KalistaExpungeMarker");
         }
-
     }
 }
